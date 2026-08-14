@@ -2321,6 +2321,13 @@ if (navToggle) {
 }
 var btt = document.getElementById('back-top');
 window.addEventListener('scroll', function(){ btt.style.display = window.scrollY > 400 ? 'flex' : 'none'; });
+// Reveal fallback: force visible if IntersectionObserver missed them
+setTimeout(function() {
+  document.querySelectorAll('.reveal:not(.visible)').forEach(function(el) {
+    el.classList.add('visible');
+  });
+}, 300);
+
 
   function openTextZoom(el) {
     var dark = el.querySelector('.svc-slide-dark');
