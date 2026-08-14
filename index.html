@@ -1,0 +1,2355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Federico Di Benedetto — Game Writer · Narrative Designer · Game Designer</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080808; --bg2: #111111; --bg3: #181818;
+      --gold: #c9a227; --gold-dim: #a07f1a;
+      --white: #f0ede6; --muted: #888; --border: rgba(201,162,39,0.18);
+      --serif: Georgia, 'Times New Roman', serif;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--white); font-family: var(--sans); font-size: 16px; line-height: 1.7; overflow-x: hidden; }
+    a { color: var(--gold); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    img { max-width: 100%; display: block; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 5vw; height: 64px; background: rgba(8,8,8,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--serif); font-size: 1rem; letter-spacing: 0.08em; color: var(--gold); white-space: nowrap; }
+    .nav-links { display: flex; gap: 2.5rem; }
+    .nav-links a { font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--gold); text-decoration: none; }
+    /* HERO */
+    #hero { min-height: 100vh; display: grid; grid-template-columns: 1.35fr 0.5fr 1.15fr; align-items: start; gap: 2.5rem 3.5rem; padding: 70px 7vw 60px; position: relative; overflow: hidden; }
+    #hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 55% 55% at 70% 50%, rgba(201,162,39,0.06) 0%, transparent 70%); pointer-events: none; }
+    .hero-left { position: relative; padding-top: 2rem; align-self: center; }
+    .hero-name { font-family: var(--serif); font-size: clamp(2.6rem,5.5vw,4.8rem); font-weight: normal; line-height: 1.1; color: var(--white); margin-bottom: 0.5rem; }
+    .hero-title { font-family: var(--serif); font-size: clamp(0.9rem,1.6vw,1.25rem); color: var(--gold); letter-spacing: 0.05em; margin-bottom: 1.6rem; }
+    .hero-tagline { font-size: clamp(1rem,1.6vw,1.2rem); color: var(--white); font-style: italic; margin-bottom: 1.1rem; max-width: 420px; letter-spacing: 0.01em; border-left: 2px solid var(--gold); padding-left: 1rem; }
+    .hero-sub { font-size: 0.92rem; color: #c0bdb6; max-width: 420px; line-height: 1.65; margin-bottom: 2.2rem; }
+    .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn { display: inline-block; padding: 0.65rem 1.4rem; font-size: 0.78rem; letter-spacing: 0.13em; text-transform: uppercase; transition: all 0.2s; white-space: nowrap; }
+    .btn-primary { background: var(--gold); color: var(--bg); font-weight: 700; }
+    .btn-primary:hover { background: #e0b82e; text-decoration: none; }
+    .btn-ghost { border: 1px solid var(--border); color: var(--muted); }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); text-decoration: none; }
+    /* HERO RIGHT = ABOUT */
+    .hero-photo { display: flex; justify-content: center; padding-top: 2rem; }
+    .hero-bio { padding-top: 2rem; }
+    .hero-photo-wrap { position: relative; width: 100%; max-width: 200px; margin-bottom: 0; }
+    .hero-photo-wrap::after { content: ''; position: absolute; top: 8px; left: 8px; right: -8px; bottom: -8px; border: 1px solid rgba(201,162,39,0.25); pointer-events: none; z-index: 0; }
+    .hero-photo-wrap img { width: 100%; filter: grayscale(10%) contrast(1.02); position: relative; z-index: 1; border: 1px solid rgba(201,162,39,0.15); display: block; }
+    .about-bio p { color: var(--muted); font-size: clamp(0.78rem, 0.85vw, 0.9rem); line-height: 1.75; margin-bottom: 1rem; }
+    .about-bio p strong { color: var(--white); }
+    .about-bio .quote { font-family: var(--serif); font-style: italic; color: var(--white); font-size: clamp(0.85rem, 0.95vw, 1rem); margin-bottom: 1.2rem; }
+    .about-diffs { list-style: none; margin: 1rem 0 1.4rem; display: flex; flex-direction: column; gap: 0.5rem; }
+    .about-diffs li { font-size: clamp(0.73rem, 0.8vw, 0.84rem); color: var(--muted); display: flex; gap: 0.6rem; align-items: flex-start; }
+    .about-diffs li::before { content: '—'; color: var(--gold); flex-shrink: 0; }
+    .langs { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .lang-badge { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; border: 1px solid var(--border); padding: 0.25rem 0.65rem; color: var(--muted); }
+    .scroll-indicator { margin-top: 2.5rem; display: flex; align-items: center; gap: 0.8rem; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: #444; }
+    .scroll-indicator::before { content: ''; display: block; width: 36px; height: 1px; background: var(--border); }
+    /* SECTIONS */
+    section { padding: 100px 10vw; }
+    .section-header { margin-bottom: 3.5rem; }
+    .section-label { font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem; }
+    .section-title { font-family: var(--serif); font-size: clamp(1.8rem,4vw,2.8rem); font-weight: normal; color: var(--white); line-height: 1.2; }
+    .section-divider { width: 60px; height: 2px; background: var(--gold); margin-top: 1.2rem; }
+    /* SERVICES */
+    #services { background: var(--bg2); }
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5px; border: 1.5px solid var(--border); }
+    .service-card { padding: 2rem 1.8rem; background: var(--bg2); transition: background 0.2s; cursor: pointer; }
+    .service-card:hover { background: var(--bg3); }
+    .service-icon { font-size: 1.2rem; margin-bottom: 0.8rem; color: var(--gold); }
+    .service-name { font-family: var(--serif); font-size: 1.05rem; color: var(--white); margin-bottom: 0.4rem; }
+    .service-desc { font-size: 0.86rem; color: var(--muted); line-height: 1.6; }
+    /* WORK */
+    #work { background: var(--bg); }
+    .work-tier { margin-bottom: 5rem; }
+    .tier-label { display: flex; align-items: center; gap: 1rem; font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); margin-bottom: 2rem; }
+    .tier-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .tier-label span { color: var(--gold); }
+    .cards-s { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+    .card-s { background: var(--bg2); border: 1px solid var(--border); overflow: hidden; cursor: pointer; transition: border-color 0.2s, transform 0.2s; display: flex; flex-direction: column; }
+    .card-s:hover { border-color: var(--gold); transform: translateY(-3px); }
+    .card-s-thumb { height: 190px; overflow: hidden; flex-shrink: 0; }
+    .card-s-thumb img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.65) saturate(0.8); transition: filter 0.3s, transform 0.4s; }
+    .card-s:hover .card-s-thumb img { filter: brightness(0.8) saturate(1); transform: scale(1.04); }
+    .card-s-thumb-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+    .card-s-body { padding: 1.5rem; display: flex; flex-direction: column; flex: 1; }
+    .card-tag { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.4rem; }
+    .card-title { font-family: var(--serif); font-size: 1.25rem; font-weight: normal; color: var(--white); margin-bottom: 0.55rem; }
+    .card-desc { font-size: 0.86rem; color: var(--muted); line-height: 1.6; margin-bottom: 1rem; flex: 1; }
+    .card-roles { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1.1rem; }
+    .role-pill { font-size: 0.67rem; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid var(--border); padding: 0.18rem 0.6rem; color: var(--muted); }
+    .card-action { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-top: auto; padding-top: 0.6rem; border-top: 1px solid var(--border); }
+    .card-action::after { content: ' →'; }
+    .cards-a { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; }
+    .card-a { background: var(--bg2); border: 1px solid var(--border); overflow: hidden; cursor: pointer; transition: border-color 0.2s, transform 0.2s; display: flex; flex-direction: column; }
+    .card-a:hover { border-color: var(--gold); transform: translateY(-2px); }
+    .card-a-thumb { height: 145px; overflow: hidden; flex-shrink: 0; }
+    .card-a-thumb img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6) saturate(0.7); transition: filter 0.3s; }
+    .card-a:hover .card-a-thumb img { filter: brightness(0.8) saturate(1); }
+    .card-a-body { padding: 1.3rem; flex: 1; display: flex; flex-direction: column; }
+    .card-a .card-title { font-size: 1.08rem; }
+    .card-a .card-action { margin-top: auto; padding-top: 0.6rem; border-top: 1px solid var(--border); }
+    .cards-b { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+    .card-b { background: var(--bg2); border: 1px solid var(--border); padding: 1.4rem; cursor: pointer; transition: border-color 0.2s; display: flex; flex-direction: column; }
+    .card-b:hover { border-color: var(--gold); }
+    .card-b .card-title { font-size: 0.98rem; margin-bottom: 0.4rem; }
+    .card-b .card-desc { font-size: 0.84rem; flex: 1; }
+    .card-b .card-action { margin-top: auto; padding-top: 0.6rem; border-top: 1px solid var(--border); font-size: 0.72rem; }
+    /* EXERCISE TABS */
+    .exercises-tabs { display:flex; gap:0; margin-bottom:2.5rem; border-bottom:1px solid var(--border); }
+    .ex-tab { background:none; border:none; border-bottom:2px solid transparent; padding:0.65rem 1.4rem; font-size:0.72rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); cursor:pointer; transition:color 0.2s, border-color 0.2s; margin-bottom:-1px; font-family:var(--sans); }
+    .ex-tab.active, .ex-tab:hover { color:var(--gold); border-bottom-color:var(--gold); text-decoration:none; }
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
+    /* EXERCISES */
+    #exercises { background: var(--bg2); }
+    .exercises-intro { font-size: 0.93rem; color: var(--muted); max-width: 560px; margin-bottom: 3rem; line-height: 1.7; }
+    .exercises-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+    .ex-card { background: var(--bg3); border: 1px solid var(--border); padding: 1.4rem; transition: border-color 0.2s; display: flex; flex-direction: column; }
+    .ex-card:hover { border-color: rgba(201,162,39,0.4); }
+    .ex-studio { font-size: 0.66rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.35rem; }
+    .ex-title { font-family: var(--serif); font-size: 0.95rem; color: var(--white); margin-bottom: 0.4rem; }
+    .ex-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.55; flex: 1; }
+    .ex-links { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .ex-link { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); border: 1px solid var(--border); padding: 0.22rem 0.7rem; transition: border-color 0.2s; }
+    .ex-link:hover { border-color: var(--gold); text-decoration: none; }
+    /* CONTACT */
+    #contact { background: var(--bg); text-align: center; }
+    .contact-title { font-family: var(--serif); font-size: clamp(2rem,5vw,3.5rem); font-weight: normal; color: var(--white); margin-bottom: 1rem; }
+    .contact-sub { color: #c0bdb6; font-size: 1rem; max-width: 480px; margin: 0 auto 2.5rem; }
+    .contact-email { font-family: var(--serif); font-size: 1.2rem; color: var(--gold); display: block; margin-bottom: 0.5rem; }
+    .contact-email:hover { text-decoration: underline; }
+    .contact-phone { font-size: 0.88rem; color: var(--muted); display: block; margin-bottom: 2rem; }
+    .contact-ctas { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+    footer { background: var(--bg2); padding: 2rem 10vw; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); font-size: 0.76rem; color: #444; }
+    /* MODALS */
+    .modal-overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.92); overflow-y: auto; padding: 4rem 2rem; }
+    .modal-overlay.open { display: flex; justify-content: center; }
+    .modal { background: var(--bg2); border: 1px solid var(--border); max-width: 720px; width: 100%; padding: 3rem; position: relative; align-self: flex-start; }
+    .modal-close { position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1.5rem; line-height: 1; transition: color 0.2s; }
+    .modal-close:hover { color: var(--white); }
+    .modal-label { font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
+    .modal-title { font-family: var(--serif); font-size: 1.85rem; font-weight: normal; color: var(--white); margin-bottom: 0.4rem; }
+    .modal-subtitle { color: var(--muted); font-size: 0.88rem; margin-bottom: 1.5rem; }
+    .modal-divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
+    .modal-section-title { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.7rem; margin-top: 1.2rem; }
+    .modal-body p { font-size: 0.9rem; color: var(--muted); line-height: 1.75; margin-bottom: 0.9rem; }
+    .modal-body p strong { color: var(--white); }
+    .modal-body ul { list-style: none; display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 1.1rem; }
+    .modal-body ul li { font-size: 0.88rem; color: var(--muted); padding-left: 1rem; position: relative; }
+    .modal-body ul li::before { content: '-'; position: absolute; left: 0; color: var(--gold); }
+    .modal-links { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.5rem; }
+    .modal-link { font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); border: 1px solid var(--border); padding: 0.4rem 1rem; transition: all 0.2s; }
+    .modal-link:hover { border-color: var(--gold); background: rgba(201,162,39,0.07); text-decoration: none; }
+    .meta-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .meta-key { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: #555; margin-bottom: 0.2rem; }
+    .meta-val { font-size: 0.85rem; color: var(--white); }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    @media (max-width: 900px) {
+      #hero { grid-template-columns: 1fr; min-height: auto; padding: 90px 6vw 60px; gap: 2rem; }
+      .hero-left { align-self: auto; padding-top: 0; }
+      .hero-photo { justify-content: flex-start; }
+    }
+    @media (max-width: 768px) {
+      section { padding: 70px 6vw; }
+      .about-layout { grid-template-columns: 1fr; gap: 2rem; }
+      nav { padding: 0 4vw; }
+      .nav-links { gap: 1.2rem; }
+      .modal { padding: 2rem 1.2rem; }
+    }
+
+    /* 2-PANEL SERVICE MODALS */
+    .modal-service { max-width: min(900px, 94vw); padding: 0; display: grid; grid-template-columns: 0.82fr 1fr; overflow: hidden; max-height: calc(100vh - 3rem); }
+    .svc-slider { position: relative; background: #060606; overflow: hidden; min-height: 400px; }
+    .svc-slide { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 0.45s ease; cursor: pointer; }
+    .svc-slide.active { opacity: 1; pointer-events: auto; }
+    .svc-slide img { width: 100%; height: 100%; object-fit: contain; background: #0e0e0e; filter: brightness(0.9) saturate(0.9); transition: filter 0.3s; display: block; }
+    .svc-slide:hover img { filter: brightness(1) saturate(1); }
+    .svc-slide-dark { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center; }
+    .svc-slide-dark .svc-title-text { font-family: var(--serif); font-size: 1.05rem; color: var(--white); margin-top: 0.9rem; line-height: 1.35; }
+    .svc-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 1.4rem 1.2rem 0.5rem; background: linear-gradient(transparent, rgba(0,0,0,0.85)); font-size: 0.63rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); pointer-events: none; }
+    .svc-hint { position: absolute; top: 0.75rem; left: 50%; transform: translateX(-50%); font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(201,162,39,0.45); z-index: 5; pointer-events: none; white-space: nowrap; }
+    .svc-prev, .svc-next { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.65); border: 1px solid rgba(201,162,39,0.3); color: var(--gold); cursor: pointer; font-size: 1.3rem; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 5; padding: 0; }
+    .svc-prev { left: 0.6rem; }
+    .svc-next { right: 0.6rem; }
+    .svc-prev:hover, .svc-next:hover { background: rgba(201,162,39,0.18); border-color: var(--gold); }
+    .svc-dots { position: absolute; bottom: 0.55rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.4rem; z-index: 5; }
+    .svc-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(201,162,39,0.3); cursor: pointer; transition: background 0.2s; }
+    .svc-dot.active { background: var(--gold); }
+    .svc-content { padding: 2.5rem 2rem; overflow-y: auto; max-height: calc(100vh - 3rem); }
+    .modal-project-modal { display: grid !important; grid-template-columns: 0.82fr 1fr !important; grid-template-rows: 400px auto !important; max-width: min(900px, 94vw) !important; width: 100% !important; padding: 0 !important; position: relative !important; max-height: none !important; overflow-y: visible !important; }
+    .proj-top { grid-column: 1 / -1 !important; grid-row: 1 !important; display: flex !important; flex-direction: row !important; height: 400px !important; overflow: hidden !important; }
+    .proj-top .svc-slider { flex: 0 0 45% !important; width: 45% !important; min-height: 400px; }
+    .proj-header { flex: 1 !important; padding: 2.5rem 2rem; overflow-y: hidden; position: relative; min-width: 0; }
+    .proj-header .modal-close { top: 1rem; right: 1rem; }
+    .proj-body { grid-column: 1 / -1 !important; grid-row: 2 !important; padding: 1.5rem 2.5rem 2rem !important; border-top: 1px solid rgba(201,162,39,0.15) !important; }
+    @media (max-width: 768px) { .proj-top { flex-direction: column !important; height: auto !important; } .proj-top .svc-slider { flex: 0 0 200px !important; width: 100% !important; } }
+    .svc-content .modal-close { top: 1rem; right: 1rem; }
+    @media (max-width: 768px) { .modal-service { grid-template-columns: 1fr; } .svc-slider { min-height: 200px; } }
+    .larian-quotes { display: flex; flex-direction: column; gap: 0.75rem; margin: 0.4rem 0 1.2rem; }
+    .larian-quote { border-left: 2px solid rgba(201,162,39,0.3); padding: 0.55rem 1rem; background: rgba(201,162,39,0.03); }
+    .lq-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 0.3rem; opacity: 0.8; }
+    .lq-text { font-family: var(--serif); font-style: italic; color: var(--white); font-size: 0.88rem; line-height: 1.65; margin: 0; }
+    .tier-intro { font-size: 0.88rem; color: var(--muted); max-width: 680px; line-height: 1.7; margin-bottom: 1.8rem; margin-top: -0.4rem; }
+
+    /* FIX: regular modal max-height */
+    .modal:not(.modal-project-modal) { max-height: calc(100vh - 3rem); overflow-y: auto; }
+    /* SERVICE SHOWCASE STRIP */
+    .service-showcase { display: flex; gap: 0.4rem; margin-bottom: 1.4rem; border-radius: 0; overflow: hidden; }
+    .service-showcase .ss-img { flex: 1; height: 110px; overflow: hidden; cursor: pointer; position: relative; border: 1px solid var(--border); }
+    .service-showcase .ss-img img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.55) saturate(0.75); transition: filter 0.25s, transform 0.35s; display: block; }
+    .service-showcase .ss-img:hover img { filter: brightness(0.8) saturate(1); transform: scale(1.05); }
+    .service-showcase .ss-label { position: absolute; bottom: 0; left: 0; right: 0; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); background: linear-gradient(transparent, rgba(0,0,0,0.75)); padding: 0.6rem 0.5rem 0.35rem; pointer-events: none; }
+    .service-showcase .ss-dark { flex: 1; height: 110px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg,#060b1a,#0d1a2e); border: 1px solid var(--border); cursor: pointer; transition: border-color 0.25s; position: relative; }
+    .service-showcase .ss-dark:hover { border-color: var(--gold); }
+    .service-showcase .ss-dark .ss-label { position: absolute; bottom: 0; left: 0; right: 0; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); padding: 0.35rem 0.5rem; background: none; }
+    /* HAMBURGER (mobile only) */
+    .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.4rem 0.6rem; color: var(--gold); font-size: 1.35rem; line-height: 1; transition: color 0.2s; }
+    .nav-toggle:hover { color: var(--white); }
+    @media (max-width: 768px) {
+      .nav-toggle { display: block; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 64px; left: 0; right: 0;
+        background: rgba(8,8,8,0.97);
+        backdrop-filter: blur(12px);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1.5rem 6vw 2rem;
+        gap: 1.4rem;
+        border-bottom: 1px solid var(--border);
+        z-index: 99;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { font-size: 0.9rem; letter-spacing: 0.1em; }
+    }
+  
+    /* Service modal: skill bullets + project tags */
+    .skill-list-svc { list-style:none; padding:0; margin:0.5rem 0 0; display:flex; flex-direction:column; gap:0.38rem; }
+    .skill-list-svc li { font-size:0.84rem; line-height:1.55; color:var(--white); padding-left:1rem; position:relative; }
+    .skill-list-svc li::before { content:''; position:absolute; left:0; top:0.58rem; width:4px; height:4px; background:var(--gold); border-radius:50%; }
+    .proj-tag { display:inline-block; font-size:0.72rem; letter-spacing:0.05em; padding:0.18rem 0.55rem; border:1px solid rgba(201,162,39,0.28); color:#a07f1a; background:rgba(201,162,39,0.05); cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+    .proj-tag:hover { border-color:var(--gold); color:var(--gold); background:rgba(201,162,39,0.1); text-decoration:none; }
+  </style>
+  <!-- SEO & Social -->
+  <meta name="description" content="Federico Di Benedetto — Game Writer, Narrative Designer and Game Designer based in Barcelona. Portfolio of narrative design, game writing, GDDs and studio tests.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Federico Di Benedetto — Game Writer · Narrative Designer · Game Designer">
+  <meta property="og:description" content="Narrative design, game writing, full GDDs and professional studio tests. Every story serves the player.">
+  <meta property="og:image" content="assets/img/profile.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Federico Di Benedetto — Game Writer · Narrative Designer">
+  <meta name="twitter:description" content="Narrative design, game writing, full GDDs and professional studio tests.">
+  <meta name="twitter:image" content="assets/img/profile.jpg">
+</head><body>
+<nav id="navbar">
+  <div class="nav-logo">Federico Di Benedetto</div>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Menu">&#9776;</button>
+  <div class="nav-links" id="nav-links">
+    <a href="#hero">About</a>
+    <a href="#services">Services</a>
+    <a href="#work">Work</a>
+    <a href="#exercises">Exercises</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<section id="hero">
+  <div class="hero-left">
+    <h1 class="hero-name">Federico<br>Di Benedetto</h1>
+    <div class="hero-title">Game Writer &middot; Narrative Designer &middot; Game Designer</div>
+    <p class="hero-tagline">Every story serves the player.</p>
+    <p class="hero-sub">&ldquo;Because narrative and design are never truly whole when kept apart.&rdquo;</p>
+    <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1.5rem;">
+      <span style="width:7px;height:7px;border-radius:50%;background:#4caf7d;display:inline-block;box-shadow:0 0 6px rgba(76,175,125,0.7);flex-shrink:0;"></span>
+      <span style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:#4caf7d;">Available &mdash; Full-time &middot; Part-time &middot; Freelance</span>
+    </div>
+    <div class="hero-cta">
+      <a href="#work" class="btn btn-primary">View My Work</a>
+      <a href="#contact" class="btn btn-ghost">Get in Touch</a>
+      <a href="https://www.linkedin.com/in/federico-di-benedetto-9700321b6/" target="_blank" rel="noopener" class="btn btn-ghost" style="display:flex;align-items:center;justify-content:center;padding:0.65rem 0.9rem;" title="LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="display:block;"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+      <a href="assets/docs/cv-federico-di-benedetto.pdf" target="_blank" class="btn btn-ghost" id="cv-btn">Download CV</a>
+    </div>
+    <div class="scroll-indicator">Scroll to explore</div>
+  </div>
+  <div class="hero-photo reveal">
+    <div class="hero-photo-wrap">
+      <img src="assets/img/profile.jpg" alt="Federico Di Benedetto">
+    </div>
+  </div>
+  <div class="hero-bio reveal">
+    <div class="about-bio">
+      <p class="quote" style="border-left:2px solid var(--gold);padding-left:1rem;">I believe the best game stories aren&rsquo;t told by the writers, they&rsquo;re discovered by the players.</p>
+      <p>Born in <strong>Catania, Italy</strong>. Based in <strong>Barcelona, Spain</strong>.</p>
+      <p>I&rsquo;ve designed games from concept to shipped product, from the world systems of <a href="#" onclick="event.preventDefault();openModal('modal-azadi')" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,162,39,0.35);" onmouseover="this.style.borderBottomColor='var(--gold)'" onmouseout="this.style.borderBottomColor='rgba(201,162,39,0.35)'"><strong>Azadi: New Moons</strong></a> to the cinematic scripts of <a href="#" onclick="event.preventDefault();openModal('modal-hungerless')" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,162,39,0.35);" onmouseover="this.style.borderBottomColor='var(--gold)'" onmouseout="this.style.borderBottomColor='rgba(201,162,39,0.35)'"><strong>Hungerless</strong></a> (exhibited at Romics), and served as a creative bridge in an Italy&ndash;Japan co-production supervised by <span style="color:var(--gold);">Suda51</span> in <a href="#" onclick="event.preventDefault();openModal('modal-dante')" style="color:var(--white);text-decoration:none;border-bottom:1px solid rgba(201,162,39,0.35);" onmouseover="this.style.borderBottomColor='var(--gold)'" onmouseout="this.style.borderBottomColor='rgba(201,162,39,0.35)'"><em>Dante Naraku!</em></a> Outside games, I write poetry.</p>
+      <ul class="about-diffs">
+        <li>Cross-cultural collaboration &mdash; Italy/Japan co-production with real cultural mediation</li>
+        <li>Design&ndash;writing fusion &mdash; every narrative choice is also a systems decision</li>
+        <li>Production discipline &mdash; GDDs, lore bibles, quest flowcharts delivered on time</li>
+        <li>Freelance delivery &mdash; full GDDs and design documents completed on commission, on time</li>
+      </ul>
+      <div class="langs">
+        <span class="lang-badge">Italian &mdash; Native</span>
+        <span class="lang-badge">English &mdash; Fluent</span>
+        <span class="lang-badge">Spanish &mdash; Fluent</span>
+        <span class="lang-badge">French &mdash; Beginner</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="section-header reveal">
+    <div class="section-label">What I Do</div>
+    <h2 class="section-title">Services</h2>
+    <div class="section-divider"></div>
+  </div>
+  <p class="section-hint" style="text-align:center;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:#666;margin:0 0 1.8rem;">Click a service to explore</p>
+  <div class="services-grid">
+    <div class="service-card reveal" onclick="openModal('modal-svc-narrative')" style="">
+      <div class="service-icon" style="font-size:0.9rem;">&#9650;</div>
+      <div class="service-name">Narrative Design</div>
+      <p class="service-desc">World-building, lore systems, character arcs, and branching quest structures that make the world feel alive and coherent.</p>
+    </div>
+    <div class="service-card reveal" onclick="openModal('modal-svc-writing')" style="">
+      <div class="service-icon" style="font-size:0.9rem;">&#9632;</div>
+      <div class="service-name">Game Writing</div>
+      <p class="service-desc">Dialogue, NPC voices, cinematic scripts, environmental storytelling: words players will actually read and remember.</p>
+    </div>
+    <div class="service-card reveal" onclick="openModal('modal-svc-gamedesign')" style="">
+      <div class="service-icon" style="font-size:0.9rem;">&#9670;</div>
+      <div class="service-name">Game Design</div>
+      <p class="service-desc">Full GDD authoring, mechanics design, systems tuning, UI flows, and production-ready documentation for any scale.</p>
+    </div>
+    <div class="service-card reveal" onclick="openModal('modal-svc-quest')" style="">
+      <div class="service-icon" style="font-size:0.9rem;">&#9656;</div>
+      <div class="service-name">Quest Design</div>
+      <p class="service-desc">Multi-path quest structures, moral dilemmas, branching flowcharts, and meaningful player choices with lasting consequences.</p>
+    </div>
+    <div class="service-card reveal" onclick="openModal('modal-svc-script')" style="">
+      <div class="service-icon" style="font-size:0.9rem;">&#9654;</div>
+      <div class="service-name">Scriptwriting</div>
+      <p class="service-desc">Voiceover scripts, cutscene direction, NPC barks, and cinematic dialogue: written for performance, not just the page.</p>
+    </div>
+    <div class="service-card reveal" onclick="openModal('modal-svc-localization')" style="">
+      <div class="service-icon" style="font-size:0.9rem;">&#9676;</div>
+      <div class="service-name">Localization (IT/EN/ES)</div>
+      <p class="service-desc">Native-level Italian, fluent English and Spanish. Cultural adaptation that preserves tone, not just meaning.</p>
+    </div>
+  </div>
+</section>
+<section id="work">
+  <div class="section-header reveal">
+    <div class="section-label">Portfolio</div>
+    <h2 class="section-title">Featured Work</h2>
+    <div class="section-divider"></div>
+  </div>
+
+  <!-- TIER S: 4 cards -->
+  <div class="work-tier">
+    <div class="tier-label reveal"><span>S</span> Full Case Studies</div>
+    <p class="tier-intro reveal">Full case studies with downloadable documents inside. Each covers the full scope of involvement from brief to delivery. Open a card and scroll to the bottom to find design docs, scripts, and attachments.</p>
+    <div class="cards-s">
+
+      <div class="card-s reveal" onclick="openModal('modal-azadi')">
+        <div class="card-s-thumb"><img src="assets/img/azadi.jpg" alt="Azadi: New Moons" loading="lazy"></div>
+        <div class="card-s-body">
+          <div class="card-tag">MMORPG &middot; Open World &middot; Narrative Design</div>
+          <h3 class="card-title">Azadi: New Moons</h3>
+          <p class="card-desc">Narrative Designer &amp; Writer on a full-scale open-world MMORPG &mdash; four kingdoms, six races, a complete cosmology, and branching quests across three acts.</p>
+          <div class="card-roles"><span class="role-pill">Narrative Design</span><span class="role-pill">Game Design</span><span class="role-pill">Lore Writing</span><span class="role-pill">Quest Design</span></div>
+          <div class="card-action">Case Study</div>
+        </div>
+      </div>
+
+      <div class="card-s reveal" onclick="openModal('modal-larian')">
+        <div class="card-s-thumb">
+          <div class="card-s-thumb-ph" style="background:linear-gradient(135deg,#1a0a2e,#2d1b4e,#0d0d1a);height:100%;">
+            <svg width="54" height="54" viewBox="0 0 60 60"><circle cx="30" cy="30" r="28" stroke="#c9a227" stroke-width="1" fill="none" opacity="0.4"/><text x="30" y="37" text-anchor="middle" fill="#c9a227" font-size="20" opacity="0.7">&#9789;</text></svg>
+          </div>
+        </div>
+        <div class="card-s-body">
+          <div class="card-tag">Dark Fantasy &middot; Branching Dialogue &middot; Larian Studios</div>
+          <h3 class="card-title">Larian Studios Writing Test</h3>
+          <p class="card-desc">2-week writing test sent directly by Larian Studios. Five-ending branching encounter in the style of D:OS2 and Baldur&rsquo;s Gate 3. Shortlisted.</p>
+          <div class="card-roles"><span class="role-pill">Narrative Writing</span><span class="role-pill">Dialogue Systems</span><span class="role-pill">NPC Design</span><span class="role-pill">Quest Design</span></div>
+          <div class="card-action">Case Study</div>
+        </div>
+      </div>
+
+      <div class="card-s reveal" onclick="openModal('modal-hungerless')">
+        <div class="card-s-thumb" style="background:linear-gradient(160deg,#0e0505,#1a0808,#0a0404);display:flex;align-items:center;justify-content:center;padding:2.5rem 2rem;overflow:hidden;">
+          <img src="assets/img/hungerless-logo.webp" alt="Hungerless" style="width:80%;object-fit:contain;filter:brightness(0.9);transition:filter 0.3s,transform 0.4s;">
+        </div>
+        <div class="card-s-body">
+          <div class="card-tag">Psychological Horror &middot; UE5 &middot; Romics</div>
+          <h3 class="card-title">Hungerless</h3>
+          <p class="card-desc">First-person psychological adventure following Victoria through the nightmares of an eating disorder. Exhibited at Romics. 3rd place at Zagarolo Game House – IV Call.</p>
+          <div class="card-roles"><span class="role-pill">Narrative Design</span><span class="role-pill">Game Design</span><span class="role-pill">GDD</span><span class="role-pill">Pitch</span></div>
+          <div class="card-action">Case Study</div>
+        </div>
+      </div>
+
+      <div class="card-s reveal" onclick="openModal('modal-dante')">
+        <div class="card-s-thumb"><img src="assets/img/dante_naraku.jpg" alt="Dante Naraku!" loading="lazy"></div>
+        <div class="card-s-body">
+          <div class="card-tag">Action Roguelite &middot; Italy &times; Japan &middot; Suda51</div>
+          <h3 class="card-title">Dante Naraku!</h3>
+          <p class="card-desc">Lead Game &amp; Narrative Designer on an Italy&ndash;Japan co-production between Vigamus Academy and Vantan Academy, supervised by Suda51.</p>
+          <div class="card-roles"><span class="role-pill">Lead</span><span class="role-pill">Narrative Design</span><span class="role-pill">Game Design</span><span class="role-pill">Writing</span></div>
+          <div class="card-action">Case Study</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TIER A: 3 cards -->
+  <div class="work-tier">
+    <div class="tier-label reveal"><span>A</span> Featured Projects</div>
+    <div class="cards-a">
+
+      <div class="card-a reveal" onclick="openModal('modal-nyck')">
+        <div class="card-a-thumb"><img src="assets/img/nyck.png" alt="Nyck" loading="lazy"></div>
+        <div class="card-a-body">
+          <div class="card-tag">Point &amp; Click &middot; Pixel Art &middot; Itamde</div>
+          <h3 class="card-title">Nyck: Shadow of Evil</h3>
+          <p class="card-desc">Noir pixel-art point &amp; click adventure. Detective Nyck investigates a missing girl case that spirals into the hidden walls of an opera house.</p>
+          <div class="card-roles"><span class="role-pill">Game Design</span><span class="role-pill">Narrative Design</span><span class="role-pill">Writing</span><span class="role-pill">Storytelling</span></div>
+          <div class="card-action">Read More</div>
+        </div>
+      </div>
+
+      <div class="card-a reveal" onclick="openModal('modal-soundon')">
+        <div class="card-a-thumb"><img src="assets/img/soundon.jpg" alt="Sound ON!" loading="lazy"></div>
+        <div class="card-a-body">
+          <div class="card-tag">Game Jam &middot; GGJ 2022 &middot; 72h</div>
+          <h3 class="card-title">Sound ON!</h3>
+          <p class="card-desc">Global Game Jam 2022 (72h), theme Dualism. Tommy, an aspiring guitarist, uses music to help adults rediscover wonder in a colorless world.</p>
+          <div class="card-roles"><span class="role-pill">Writing</span><span class="role-pill">Narrative Design</span><span class="role-pill">Game Design</span><span class="role-pill">Time-Based</span></div>
+          <div class="card-action">Read More</div>
+        </div>
+      </div>
+
+      <div class="card-a reveal" onclick="openModal('modal-space')">
+        <div class="card-a-thumb" style="background:linear-gradient(135deg,#060b1a,#0d1a2e,#060b1a);height:145px;display:flex;align-items:center;justify-content:center;">
+          <svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" stroke="#c9a227" stroke-width="0.8" fill="none" opacity="0.3"/><circle cx="24" cy="24" r="3" fill="#c9a227" opacity="0.5"/><line x1="24" y1="4" x2="24" y2="44" stroke="#c9a227" stroke-width="0.5" opacity="0.2"/><line x1="4" y1="24" x2="44" y2="24" stroke="#c9a227" stroke-width="0.5" opacity="0.2"/></svg>
+        </div>
+        <div class="card-a-body">
+          <div class="card-tag">Freelance &middot; MMORPG &middot; Space Sim &middot; GDD</div>
+          <h3 class="card-title">Space Rivals!</h3>
+          <p class="card-desc">Full GDD for a 3D space MMORPG: 6 civilizations, dynamic ship combat, galaxy-scale economy, PvP &amp; PvE. Delivered in approximately one month.</p>
+          <div class="card-roles"><span class="role-pill">Game Design</span><span class="role-pill">Systems Design</span><span class="role-pill">Balancing</span></div>
+          <div class="card-action">Read More</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TIER B: 3 cards -->
+  <div class="work-tier">
+    <div class="tier-label reveal"><span>B</span> Design Work</div>
+    <div class="cards-b">
+
+      <div class="card-b reveal" onclick="openModal('modal-mindless')" style="padding:0;overflow:hidden;">
+        <div style="height:120px;overflow:hidden;"><img src="assets/img/mindless.jpg" alt="Mindless Breakpoint" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6) saturate(0.7);transition:filter 0.3s;" onmouseover="this.style.filter='brightness(0.8) saturate(1)'" onmouseout="this.style.filter='brightness(0.6) saturate(0.7)'"></div>
+        <div style="padding:1.4rem;">
+        <div class="card-tag">Horror Adventure &middot; Steam &middot; Consultant</div>
+        <h3 class="card-title">Mindless Breakpoint</h3>
+        <p class="card-desc">First-person horror adventure set inside a mental asylum. External consultant of Game &amp; Narrative Design for Itamde.</p>
+        <div class="card-roles" style="margin-top:0.8rem;"><span class="role-pill">Game Design</span><span class="role-pill">Narrative Design</span><span class="role-pill">Storytelling</span><span class="role-pill">External Consultant</span></div>
+        <div class="card-action">Read More</div>
+        </div>
+      </div>
+
+      <div class="card-b reveal" onclick="openModal('modal-newworld')" style="padding:0;overflow:hidden;">
+        <div style="height:120px;overflow:hidden;"><img src="assets/img/newworld.webp" alt="New World" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6) saturate(0.7);transition:filter 0.3s;" onmouseover="this.style.filter='brightness(0.8) saturate(1)'" onmouseout="this.style.filter='brightness(0.6) saturate(0.7)'"></div>
+        <div style="padding:1.4rem;">
+        <div class="card-tag">AAA &middot; Amazon Games &middot; MMORPG</div>
+        <h3 class="card-title">New World</h3>
+        <p class="card-desc">Game Tester, Community Manager, and Forum Moderator for the European launch. Bug reporting, feedback synthesis, multilingual player support.</p>
+        <div class="card-roles" style="margin-top:0.8rem;"><span class="role-pill">QA Testing</span><span class="role-pill">Community Management</span><span class="role-pill">Forum Moderator</span></div>
+        <div class="card-action">Read More</div>
+        </div>
+      </div>
+
+      <div class="card-b reveal" onclick="openModal('modal-lostark')" style="padding:0;overflow:hidden;">
+        <div style="height:120px;overflow:hidden;"><img src="assets/img/lostark.webp" alt="Lost Ark" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6) saturate(0.7);transition:filter 0.3s;" onmouseover="this.style.filter='brightness(0.8) saturate(1)'" onmouseout="this.style.filter='brightness(0.6) saturate(0.7)'"></div>
+        <div style="padding:1.4rem;">
+        <div class="card-tag">AAA &middot; Amazon Games &middot; MMORPG</div>
+        <h3 class="card-title">Lost Ark</h3>
+        <p class="card-desc">Game Tester, Community Manager, and Forum Moderator for the European launch. Incident management, multilingual support (IT/EN/ES).</p>
+        <div class="card-roles" style="margin-top:0.8rem;"><span class="role-pill">QA Testing</span><span class="role-pill">Community Management</span><span class="role-pill">Forum Moderator</span></div>
+        <div class="card-action">Read More</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<section id="exercises">
+  <div class="section-header reveal">
+    <div class="section-label">Professional Assessments</div>
+    <h2 class="section-title">Studio Tests &amp; Exercises</h2>
+    <div class="section-divider"></div>
+  </div>
+  <p class="exercises-intro reveal">Take-home tests sent by studios during hiring processes, plus two personal design exercises. Most were part of real selection rounds &mdash; each document demonstrates a specific discipline: game design, economy balancing, narrative writing, or game analysis.</p>
+  <div class="exercises-tabs">
+    <button class="ex-tab active" data-tab="studio" onclick="switchTab('studio')">Studio Tests</button>
+    <button class="ex-tab" data-tab="personal" onclick="switchTab('personal')">Personal Projects</button>
+  </div>
+  <div id="tab-studio" class="tab-content active">
+  <div class="exercises-grid">
+
+    <div class="ex-card reveal">
+      <div class="ex-studio">Gameloft &middot; Barcelona</div>
+      <div class="ex-title">Game Design Test</div>
+      <p class="ex-desc">Mobile game design exercise for Gameloft's Barcelona studio: mechanics design, feature proposals, and production-ready documentation.</p>
+      <div class="ex-links"><a href="assets/docs/gameloft-game-designer.pdf" target="_blank" class="ex-link">View PDF</a></div>
+    </div>
+
+    <div class="ex-card reveal">
+      <div class="ex-studio">Gameloft &middot; Economy Designer</div>
+      <div class="ex-title">Economy Design Test</div>
+      <p class="ex-desc">Economy design challenge: monetization structures, progression balance, and player retention system proposals.</p>
+      <div class="ex-links"><span style="font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:#555;border:1px solid rgba(255,255,255,0.06);padding:0.22rem 0.7rem;">Confidential &mdash; not authorized for sharing</span></div>
+    </div>
+
+    <div class="ex-card reveal">
+      <div class="ex-studio">MixedBag</div>
+      <div class="ex-title">Narrative Design Test</div>
+      <p class="ex-desc">Narrative design exercise: world-building, character background, and branching story proposal for an existing franchise.</p>
+      <div class="ex-links"><a href="assets/docs/mixedbag-exercise.pdf" target="_blank" class="ex-link">View PDF</a></div>
+    </div>
+
+    <div class="ex-card reveal">
+      <div class="ex-studio">NordCurrent</div>
+      <div class="ex-title">Game Writing Test</div>
+      <p class="ex-desc">Writing exercise testing dialogue craft, narrative consistency, and tone matching for an established franchise.</p>
+      <div class="ex-links"><a href="assets/docs/nordcurrent-exercise.pdf" target="_blank" class="ex-link">View PDF</a></div>
+    </div>
+
+    <div class="ex-card reveal">
+      <div class="ex-studio">Primorden</div>
+      <div class="ex-title">Character Design Test: Vexalis</div>
+      <p class="ex-desc">Original character design: Vexalis, the Discordant Dynamo &mdash; Origin of Fear and Discord with a complete backstory, powers, and legacy arc. Includes a full quest design: Shadows Unleashed.</p>
+      <div class="ex-links">
+        <a href="assets/docs/primorden-exercise.pdf" target="_blank" class="ex-link">View PDF</a>
+        <a href="assets/docs/primorden-ideas.pdf" target="_blank" class="ex-link">Ideas Doc</a>
+        <a class="ex-link" style="cursor:pointer;" onclick="event.preventDefault();openLightbox('assets/img/primorden-quest-flowchart.png','Shadows Unleashed Quest Flowchart');" href="#">Quest Flowchart</a>
+      </div>
+    </div>
+
+    <div class="ex-card reveal">
+      <div class="ex-studio">QForMedia</div>
+      <div class="ex-title">Scriptwriter Test</div>
+      <p class="ex-desc">Voiceover script creation and scriptwriter assignment: dialogue for performance, production notes, and tone direction.</p>
+      <div class="ex-links">
+        <a href="assets/docs/qformedia-voiceover.pdf" target="_blank" class="ex-link">Voiceover Script</a>
+        <a href="assets/docs/qformedia-scriptwriter.pdf" target="_blank" class="ex-link">Scriptwriter Test</a>
+      </div>
+    </div>
+
+    <div class="ex-card reveal">
+      <div class="ex-studio">Furzies / Mergedoku</div>
+      <div class="ex-title">Game Analysis &amp; Proposals</div>
+      <p class="ex-desc">Deep analysis of a mobile puzzle game. Identified core UX friction points and proposed two actionable improvements backed by player behavior logic.</p>
+      <div class="ex-links">
+        <a href="assets/docs/furzies-analysis.pdf" target="_blank" class="ex-link">Game Analysis</a>
+        <a href="assets/docs/mergedoku-feature.pdf" target="_blank" class="ex-link">Feature Design</a>
+        <a class="ex-link" style="cursor:pointer;" onclick="event.preventDefault();openLightbox('assets/img/furzies-core-loop.jpg','Furzies: Core Loop Diagram');" href="#">Core Loop Diagram</a>
+      </div>
+    </div>
+
+    <div class="ex-card reveal">
+      <div class="ex-studio">EasyBrain &middot; Blockudoku</div>
+      <div class="ex-title">Mobile Design Exercise</div>
+      <p class="ex-desc">Retention and monetization analysis for Blockudoku (10M+ downloads). Competitive benchmarking vs. Tetris, new feature proposals with full PRDs.</p>
+      <div class="ex-links"><a href="assets/docs/blockudoku-design.pdf" target="_blank" class="ex-link">View PDF</a></div>
+    </div>
+
+  </div><!-- /exercises-grid -->
+  </div><!-- /tab-studio -->
+
+  <div id="tab-personal" class="tab-content">
+  <div class="exercises-grid">
+
+    <div class="ex-card reveal">
+      <div class="ex-studio">Original Story</div>
+      <div class="ex-title">Anti-Cupid: The Eros Revenge</div>
+      <p class="ex-desc">Original story prologue. Anti-Cupid is a dark fantasy romantic comedy about a rebellious Eros who turns against love itself: mythology through satire and character-driven writing.</p>
+      <div class="ex-links"><a href="assets/docs/extra-anticupid.pdf" target="_blank" class="ex-link">Read Prologue</a></div>
+    </div>
+
+    <div class="ex-card reveal">
+      <div class="ex-studio">Quest Design</div>
+      <div class="ex-title">Retrieve the Tadpoles</div>
+      <p class="ex-desc">Original quest design exercise, self-imposed brief inspired by Baldur&rsquo;s Gate 3. Full quest structure, branching dialogue, and player-driven outcomes.</p>
+      <div class="ex-links"><a href="assets/docs/extra-retrieve-tadpoles.pdf" target="_blank" class="ex-link">View PDF</a></div>
+    </div>
+
+    <div class="ex-card reveal">
+      <div class="ex-studio">Original Story &middot; Visual Novel</div>
+      <div class="ex-title">Vivienne &amp; St. Joseph&rsquo;s Catholic Orphanage</div>
+      <p class="ex-desc">Story and dialogues for an original visual novel set in a haunted Catholic orphanage. Full cast, complete dialogue structure, and an ambitious narrative concept.</p>
+      <div class="ex-links">
+        <a href="assets/docs/extra-vivienne.pdf" target="_blank" class="ex-link">Story &amp; Dialogues</a>
+        <a class="ex-link" style="cursor:pointer;" onclick="event.preventDefault();openLightbox('assets/img/extra-vivienne.jpg','Vivienne: Title Screen');" href="#">Main Screen / Title Screen</a>
+      </div>
+    </div>
+
+    <div class="ex-card reveal">
+      <div class="ex-studio">Fan Design &middot; Warcraft III</div>
+      <div class="ex-title">The Orc Resurrection</div>
+      <p class="ex-desc">Fan narrative design for Warcraft III &mdash; an original campaign concept with custom factions, storyline, and narrative beats written in the established Warcraft tone.</p>
+      <div class="ex-links"><a href="assets/docs/extra-warcraft3.pdf" target="_blank" class="ex-link">View PDF</a></div>
+    </div>
+
+    <div class="ex-card reveal">
+      <div class="ex-studio">Quest Design</div>
+      <div class="ex-title">Game Design Concept: Branching Quest</div>
+      <p class="ex-desc">A detailed branching quest flowchart with a full legend, color-coded choice types (quest, event, combat, reward), and multiple mission paths, designed to demonstrate quest structure methodology.</p>
+      <div class="ex-links">
+        <a class="ex-link" style="cursor:pointer;" onclick="event.preventDefault();openLightbox('assets/img/extra-design-concept.png','Game Design Concept: Branching Quest Flowchart');" href="#">View Flowchart</a>
+      </div>
+    </div>
+
+  </div><!-- /exercises-grid personal -->
+  </div><!-- /tab-personal -->
+</section>
+
+
+
+<section id="recommendations" style="background:var(--bg);">
+  <div class="section-header reveal">
+    <div class="section-label">Recommendations</div>
+    <h2 class="section-title">What colleagues say</h2>
+    <div class="section-divider"></div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:2rem;align-items:start;">
+
+    <!-- Konrad Hughes -->
+    <div class="reveal" style="background:var(--bg2);border:1px solid var(--border);padding:2rem;display:flex;flex-direction:column;gap:1.4rem;">
+      <div style="font-family:var(--serif);font-size:3rem;line-height:0.8;color:rgba(201,162,39,0.18);">&ldquo;</div>
+      <div style="font-family:var(--serif);font-size:0.91rem;color:#d0cdc6;line-height:1.8;font-style:italic;display:flex;flex-direction:column;gap:0.9rem;">
+        <p style="margin:0;">I highly recommend Federico for his outstanding work as a game and narrative designer on our video game project, Lands of Azadi. As his colleague at Ready4Player studio, I have had the pleasure of working closely with Federico on crafting the story and writing dialogues for our game. It is always a pleasure to brainstorm and collaborate with him.</p>
+        <p style="margin:0;">Federico is a talented writer with a keen eye for detail and a deep understanding of narrative structure. He consistently brought fresh and innovative ideas to the table, and his ability to seamlessly integrate them into the existing storyline was impressive. He has a gift for creating rich, complex characters that players can easily connect with and care about, and his dialogues are always natural, engaging, and emotionally resonant.</p>
+        <p style="margin:0;">Throughout the project, Federico demonstrated excellent communication and collaboration skills, working closely with our team to ensure that the story and characters aligned with the gameplay mechanics and overall vision for the game. He is a dedicated and hardworking individual who always went above and beyond to ensure that the narrative was of the highest quality.</p>
+        <p style="margin:0;">Overall, I wholeheartedly recommend Federico for any narrative design or writing position. He is an incredibly talented writer with a passion for storytelling and a deep understanding of the gaming industry. I am confident that he will make a valuable contribution to any team and project he joins.</p>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:1.2rem;display:flex;align-items:center;gap:1rem;">
+        <img src="assets/img/rec-konrad.png" alt="Konrad Hughes" style="width:48px;height:48px;border-radius:50%;object-fit:cover;object-position:center top;border:1px solid rgba(201,162,39,0.2);flex-shrink:0;">
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:0.82rem;font-weight:600;color:var(--white);">Konrad Hughes</div>
+          <div style="font-size:0.72rem;color:var(--muted);margin-top:0.1rem;">Narrative Designer &middot; Ready4Player</div>
+          <div style="font-size:0.67rem;color:#555;margin-top:0.1rem;">Azadi: New Moons &middot; Feb 2023</div>
+        </div>
+        <a href="https://www.linkedin.com/in/konrad-b-hughes/" target="_blank" rel="noopener" style="color:var(--muted);transition:color 0.2s;flex-shrink:0;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'" title="View on LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display:block;"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+      </div>
+    </div>
+
+    <!-- Joao Machado -->
+    <div class="reveal" style="background:var(--bg2);border:1px solid var(--border);padding:2rem;display:flex;flex-direction:column;gap:1.4rem;">
+      <div style="font-family:var(--serif);font-size:3rem;line-height:0.8;color:rgba(201,162,39,0.18);">&ldquo;</div>
+      <div style="font-family:var(--serif);font-size:0.91rem;color:#d0cdc6;line-height:1.8;font-style:italic;display:flex;flex-direction:column;gap:0.9rem;">
+        <p style="margin:0;">While working on the initial concept, lore and narrative for a new videogame project, I collaborated with Federico on several occasions. He showed not only a great knowledge about writing and narrative skills, but a constant care for a consistent, thorough story all the way.</p>
+        <p style="margin:0;">Providing rich, and most importantly, consistent details on every character, questline, location or object for the game, Federico wrote intriguing and captivating stories on everything he worked on, all while caring for a consistent and thorough story, making sure it was fun and fascinating.</p>
+        <p style="margin:0;">He promptly learned how to use new tools and complex software, adapting to the company&rsquo;s workflow. Always lending a helping hand when needed, he was also constantly exceeding expectations and being a step ahead in our planning. Federico shows also great communication and cooperation skills, making him a solid co-worker and the go-to guy whenever you&rsquo;re having creative issues.</p>
+        <p style="margin:0;">I highly recommend Federico due not only to his great and detailed writing, narrative and lore building skills, but also due to his communication, cooperation and problem-solving abilities.</p>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:1.2rem;display:flex;align-items:center;gap:1rem;">
+        <img src="assets/img/rec-joao.png" alt="Joao Machado" style="width:48px;height:48px;border-radius:50%;object-fit:cover;object-position:center top;border:1px solid rgba(201,162,39,0.2);flex-shrink:0;">
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:0.82rem;font-weight:600;color:var(--white);">Joao Machado</div>
+          <div style="font-size:0.72rem;color:var(--muted);margin-top:0.1rem;">Tech Art</div>
+          <div style="font-size:0.67rem;color:#555;margin-top:0.1rem;">Azadi: New Moons &middot; Jun 2023</div>
+        </div>
+        <a href="https://www.linkedin.com/in/joaogmachado/" target="_blank" rel="noopener" style="color:var(--muted);transition:color 0.2s;flex-shrink:0;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'" title="View on LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display:block;"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<section id="contact">
+  <div class="reveal">
+    <div class="section-label" style="margin-bottom:1rem;">Let&rsquo;s Work Together</div>
+    <h2 class="contact-title">Ready when you are.</h2>
+    <p class="contact-sub">Whether you need a full narrative design document, a writing collaborator, or a complete GDD: let&rsquo;s talk.</p>
+    <a href="mailto:Federicodibenedetto17@gmail.com" class="contact-email">Federicodibenedetto17@gmail.com</a>
+    <a href="https://wa.me/34603120239" target="_blank" rel="noopener" class="contact-phone">
+      <svg viewBox="0 0 24 24" width="16" height="16" style="display:inline-block;vertical-align:middle;margin-right:6px;margin-bottom:2px;" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.116 1.535 5.845L.057 23.885a.5.5 0 0 0 .606.63l6.205-1.63A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.013-1.376l-.36-.213-3.683.968.984-3.596-.234-.372A9.818 9.818 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>+34 603 120 239</a>
+    <div class="contact-ctas">
+      <a href="https://www.linkedin.com/in/federico-di-benedetto-9700321b6/" target="_blank" rel="noopener" class="btn btn-ghost">LinkedIn</a>
+      <a href="assets/docs/cv-federico-di-benedetto.pdf" target="_blank" class="btn btn-ghost">Download CV</a>
+      <a href="mailto:Federicodibenedetto17@gmail.com" class="btn btn-primary">Send Email</a>
+    </div>
+  </div>
+</section>
+
+<footer style="flex-direction:column;gap:0.8rem;text-align:center;">
+  <p style="font-family:var(--serif);font-style:italic;font-size:0.88rem;color:#aaa;max-width:600px;line-height:1.6;">&ldquo;Everything could be art, it&rsquo;s just a matter of how much passion we put into our creations.&rdquo;</p>
+  <div style="display:flex;gap:2rem;justify-content:center;">
+    <span>&copy; 2026 Federico Di Benedetto</span>
+    <span>Game Writer &middot; Narrative Designer &middot; Game Designer</span>
+  </div>
+</footer>
+<!-- MODALS -->
+<!-- SERVICE SHOWCASE MODALS -->
+<div class="modal-overlay" id="modal-svc-narrative" onclick="closeModalOutside(event,'modal-svc-narrative')">
+  <div class="modal modal-service">
+    <div class="svc-slider" id="slider-narrative">
+  <div class="svc-hint">click to zoom</div>
+  <div class="svc-slide active" onclick="event.stopPropagation();openTextZoom(this)">
+    <div class="svc-slide-dark" style="background:linear-gradient(160deg,#060510 0%,#0a0818 55%,#120d22 100%);align-items:flex-start;justify-content:flex-start;padding:0;text-align:left;">
+      <div style="width:100%;padding:1.55rem 1.1rem 0.4rem;border-bottom:1px solid rgba(201,162,39,0.12);display:flex;justify-content:space-between;align-items:flex-end;flex-shrink:0;">
+        <span style="font-size:0.53rem;letter-spacing:0.24em;text-transform:uppercase;color:#a07f1a;">Azadi: New Moons &middot; Lore Doc</span>
+        <span style="font-size:0.5rem;letter-spacing:0.1em;color:#8fa89a;font-family:'Courier New',monospace;opacity:0.7;">Lore_Doc_Azadi.pdf</span>
+      </div>
+      <div style="flex:1;padding:0.7rem 3rem;overflow:hidden;display:flex;flex-direction:column;gap:0.35rem;min-height:0;">
+        <span style="font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:#c9a227;">The Four Moons of Azadi</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.3rem 0.8rem;margin-top:0.1rem;">
+          <div style="border-left:2px solid #6a8a6a;padding-left:0.4rem;"><span style="font-size:0.58rem;color:#8da878;letter-spacing:0.12em;text-transform:uppercase;">Caddan</span><p style="font-size:0.6rem;color:#666;margin:0.1rem 0 0;">White &middot; Earth / Foraging / Defense</p></div>
+          <div style="border-left:2px solid #3a5a8a;padding-left:0.4rem;"><span style="font-size:0.58rem;color:#6a8ab8;letter-spacing:0.12em;text-transform:uppercase;">Modre</span><p style="font-size:0.6rem;color:#666;margin:0.1rem 0 0;">Blue &middot; Water / Healing / Memory</p></div>
+          <div style="border-left:2px solid #8a3a3a;padding-left:0.4rem;"><span style="font-size:0.58rem;color:#c87a6a;letter-spacing:0.12em;text-transform:uppercase;">Sor</span><p style="font-size:0.6rem;color:#666;margin:0.1rem 0 0;">Red &middot; Fire / Combat / Destruction</p></div>
+          <div style="border-left:2px solid #3a7a4a;padding-left:0.4rem;"><span style="font-size:0.58rem;color:#6ab87a;letter-spacing:0.12em;text-transform:uppercase;">Yesh</span><p style="font-size:0.6rem;color:#666;margin:0.1rem 0 0;">Green &middot; Nature / Growth / Poison</p></div>
+        </div>
+        <p style="font-family:Georgia,serif;font-size:0.67rem;color:#999;line-height:1.5;font-style:italic;margin:0.2rem 0 0 0;">Each moon divides into Day and Night variants &mdash; Light/Cosmic (Sor day), Blood/Shadow (Sor night), Nature/Stone (Caddan day), Metal/Poison (Caddan night).</p>
+      </div>
+      <div style="width:100%;padding:0.32rem 1.1rem;border-top:1px solid rgba(201,162,39,0.07);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#444;">World Cosmology &middot; 15+ Documents</span>
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#666;">click to explore &#8594;</span>
+      </div>
+    </div>
+    <div class="svc-caption">Azadi: New Moons</div>
+  </div>
+  <div class="svc-slide" onclick="event.stopPropagation();openTextZoom(this)">
+    <div class="svc-slide-dark" style="background:linear-gradient(160deg,#0c0606 0%,#160808 55%,#1e0c10 100%);align-items:flex-start;justify-content:flex-start;padding:0;text-align:left;">
+      <div style="width:100%;padding:1.55rem 1.1rem 0.4rem;border-bottom:1px solid rgba(201,162,39,0.12);display:flex;justify-content:space-between;align-items:flex-end;flex-shrink:0;">
+        <span style="font-size:0.53rem;letter-spacing:0.24em;text-transform:uppercase;color:#a07f1a;">Dante Naraku! &middot; Game Bible</span>
+        <span style="font-size:0.5rem;letter-spacing:0.1em;color:#8fa89a;font-family:'Courier New',monospace;opacity:0.7;">INFINITO_3_GAME_BIBLE.pdf</span>
+      </div>
+      <div style="flex:1;padding:0.7rem 3rem;overflow:hidden;display:flex;flex-direction:column;gap:0.38rem;min-height:0;">
+        <span style="font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:#c9a227;">Dual Mythology Fusion</span>
+        <p style="font-family:Georgia,serif;font-size:0.69rem;color:#ccc9c0;line-height:1.55;margin:0;">A collision between Dante&rsquo;s <em>Divina Commedia</em> and Japanese underworld mythology. Hell is not a place &mdash; it is a living narrative system.</p>
+        <div style="display:flex;flex-direction:column;gap:0.22rem;margin-top:0.1rem;">
+          <div style="display:flex;gap:0.4rem;align-items:baseline;"><span style="color:#c9a227;font-size:0.6rem;flex-shrink:0;">&#9654;</span><span style="font-size:0.65rem;color:#aaa;line-height:1.4;"><strong style="color:#ccc9c0;">Karma System</strong> &mdash; every moral choice modifies narrative outcomes and unlocks hidden paths</span></div>
+          <div style="display:flex;gap:0.4rem;align-items:baseline;"><span style="color:#c9a227;font-size:0.6rem;flex-shrink:0;">&#9654;</span><span style="font-size:0.65rem;color:#aaa;line-height:1.4;"><strong style="color:#ccc9c0;">Holy Machinarium</strong> &mdash; skill tree from Dante&rsquo;s circles, binding lore to mechanical progression</span></div>
+          <div style="display:flex;gap:0.4rem;align-items:baseline;"><span style="color:#c9a227;font-size:0.6rem;flex-shrink:0;">&#9654;</span><span style="font-size:0.65rem;color:#aaa;line-height:1.4;"><strong style="color:#ccc9c0;">Vigamus &times; Vantan</strong> &mdash; Italian-Japanese collaboration; assumed Lead after team restructuring</span></div>
+        </div>
+      </div>
+      <div style="width:100%;padding:0.32rem 1.1rem;border-top:1px solid rgba(201,162,39,0.07);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#444;">Lead Narrative Designer</span>
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#666;">click to explore &#8594;</span>
+      </div>
+    </div>
+    <div class="svc-caption">Dante Naraku!</div>
+  </div>
+
+  <div class="svc-slide" onclick="event.stopPropagation();openLightbox('assets/img/azadi-storyboard.jpg','Azadi: Opening Cinematic Storyboard')">
+    <img src="assets/img/azadi-storyboard.jpg" style="object-fit:contain;background:#000;" alt="Azadi: Opening Cinematic Storyboard" loading="lazy">
+    <div class="svc-caption">Azadi: Opening Cinematic Storyboard</div>
+  </div>
+  <div class="svc-slide" onclick="event.stopPropagation();openLightbox('assets/img/vivienne-screen.jpg','Vivienne & The St. Joseph\'s Catholic Orphanage')">
+    <img src="assets/img/vivienne-screen.jpg" style="object-fit:contain;background:#080808;" alt="Vivienne & The Orphanage" loading="lazy">
+    <div class="svc-caption">Vivienne &amp; The Orphanage</div>
+  </div>
+  <div class="svc-slide" onclick="event.stopPropagation();openLightbox('assets/img/azadi-names.jpg','Azadi: Naming System')">
+    <img src="assets/img/azadi-names.jpg" style="object-fit:contain;background:#0a0a0a;" alt="Azadi: Naming System" loading="lazy">
+    <div class="svc-caption">Azadi: Naming System</div>
+  </div>
+  <button class="svc-prev" onclick="event.stopPropagation();sliderPrev('slider-narrative')">&#8249;</button>
+  <button class="svc-next" onclick="event.stopPropagation();sliderNext('slider-narrative')">&#8250;</button>
+<div class="svc-dots">
+  <span class="svc-dot active" onclick="event.stopPropagation();sliderGo('slider-narrative',0)"></span>
+  <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-narrative',1)"></span>
+  <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-narrative',2)"></span>
+  <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-narrative',3)"></span>
+  <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-narrative',4)"></span>
+  </div>
+</div>
+    <div class="svc-content">
+      <button class="modal-close" onclick="closeModal('modal-svc-narrative')">&times;</button>
+      <div class="modal-label">Service</div>
+      <h2 class="modal-title">Narrative Design</h2>
+      <p class="modal-subtitle">World-building &middot; Lore Systems &middot; Branching Structures</p>
+      <div class="modal-divider"></div>
+      <div class="modal-body">
+        <div class="svc-label" style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#a07f1a;margin-bottom:0.35rem;">What I bring</div>
+        <p style="font-size:0.86rem;line-height:1.7;margin-bottom:1.1rem;">Narrative design matters more than most realize, often more than the writing itself. A world too large for its game overwhelms the team and the players equally: balance and intentionality count more than volume. I approach it as a player first, asking how the lore lands before I build it. I write all of it, documentation and text, at the intersection of narrative and game design.</p>
+        <div class="svc-label" style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#a07f1a;margin-bottom:0.5rem;">Key points</div>
+        <ul class="skill-list-svc">
+          <li>Lore systems architecture: structured, layered documentation that developers can build from</li>
+          <li>Narrative as mechanics: world logic that generates and constrains gameplay systems, not just flavor</li>
+          <li>Branching narrative structure: multi-path flowcharts where player agency feels intentional</li>
+          <li>Narrative that lands: world elements designed to be felt, not just filed away in a codex</li>
+        </ul>
+        <div style="margin-top:1.1rem;padding-top:0.9rem;border-top:1px solid rgba(201,162,39,0.2);">
+          <div style="font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:#555;margin-bottom:0.4rem;">Present across</div>
+          <div style="display:flex;flex-wrap:wrap;gap:0.4rem;"><span class="proj-tag" onclick="closeModal('modal-svc-narrative');openModal('modal-azadi')">Azadi: New Moons</span><span class="proj-tag" onclick="closeModal('modal-svc-narrative');openModal('modal-hungerless')">Hungerless</span><span class="proj-tag" onclick="closeModal('modal-svc-narrative');openModal('modal-dante')">Dante Naraku!</span><span class="proj-tag" onclick="closeModal('modal-svc-narrative');openModal('modal-nyck')">Nyck</span><span class="proj-tag" onclick="closeModal('modal-svc-narrative');openModal('modal-soundon')">Sound ON!</span><span class="proj-tag" onclick="closeModal('modal-svc-narrative');openModal('modal-larian')">Larian</span><span class="proj-tag" onclick="closeModal('modal-svc-narrative');openModal('modal-mindless')">Mindless Breakpoint</span><span class="proj-tag" onclick="closeModal('modal-svc-narrative');setTimeout(function(){document.getElementById('exercises').scrollIntoView({behavior:'smooth'});},300)">Studio Exercises & Personal Projects</span></div>
+        </div>
+      </div>
+      <div class="modal-links">
+        <a href="#work" onclick="closeModal('modal-svc-narrative')" class="modal-link">View All Work &#8594;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-svc-writing" onclick="closeModalOutside(event,'modal-svc-writing')">
+  <div class="modal modal-service">
+    <div class="svc-slider" id="slider-writing">
+  <div class="svc-hint">click to zoom</div>
+  <div class="svc-slide active" onclick="event.stopPropagation();openTextZoom(this)">
+    <div class="svc-slide-dark" style="background:linear-gradient(160deg,#07090f 0%,#0e1520 60%,#141c2e 100%);align-items:flex-start;justify-content:flex-start;padding:0;text-align:left;">
+      <!-- header bar: taller so hint doesn't overlap text -->
+      <div style="width:100%;padding:1.55rem 1.1rem 0.4rem;border-bottom:1px solid rgba(201,162,39,0.12);display:flex;justify-content:space-between;align-items:flex-end;flex-shrink:0;">
+        <span style="font-size:0.53rem;letter-spacing:0.24em;text-transform:uppercase;color:#a07f1a;">Larian Studios Writing Test</span>
+        <span style="font-size:0.5rem;letter-spacing:0.1em;color:#b85c5c;font-family:'Courier New',monospace;opacity:0.7;">INT. UNDERGROUND CHAMBER</span>
+      </div>
+      <div style="flex:1;padding:0.7rem 3rem;overflow:hidden;display:flex;flex-direction:column;gap:0.42rem;min-height:0;">
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div style="width:5px;height:5px;background:#4caf7d;border-radius:50%;flex-shrink:0;"></div>
+          <span style="font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#4caf7d;font-weight:600;">Player</span>
+        </div>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#9db8a8;line-height:1.5;margin:0 0 0.2rem 0;font-style:italic;">"So you're just some lunatic who enjoys watching people die?"</p>
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div style="width:5px;height:5px;background:#b85c5c;border-radius:50%;flex-shrink:0;"></div>
+          <span style="font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#b85c5c;font-weight:600;">Unknown</span>
+        </div>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#ccc9c0;line-height:1.55;margin:0;">"A lunatic? Oh, you think so little of me? I do enjoy watching people die. That's part of my nature. Death holds something cryptic, something visceral. In death's instant, a life flashes — a final moment, full of every choice, every regret."</p>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#ccc9c0;line-height:1.55;margin:0;">"Death is a blessing. It feels extraordinary when you are the one to decide when and how it comes. I'd call myself more of a <em>fanatic</em> than a lunatic."</p>
+        <div style="margin-top:auto;border-top:1px solid rgba(201,162,39,0.1);padding-top:0.45rem;display:flex;flex-direction:column;gap:0.3rem;">
+          <div style="display:flex;gap:0.5rem;align-items:baseline;">
+            <span style="color:#4caf7d;font-size:0.66rem;flex-shrink:0;">&#9672;</span>
+            <span style="font-size:0.67rem;color:#8db89e;line-height:1.4;">"What are you, some kind of <em>god</em>?"</span>
+          </div>
+          <div style="display:flex;gap:0.5rem;align-items:baseline;">
+            <span style="color:#4caf7d;font-size:0.66rem;flex-shrink:0;">&#9672;</span>
+            <span style="font-size:0.67rem;color:#8db89e;line-height:1.4;">"I've had enough of your madness."</span>
+          </div>
+        </div>
+      </div>
+      <div style="width:100%;padding:0.32rem 1.1rem;border-top:1px solid rgba(201,162,39,0.07);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#444;">Path A · Confrontational Route</span>
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#666;">click to explore &#8594;</span>
+      </div>
+    </div>
+    <div class="svc-caption">Larian Studios Writing Test</div>
+  </div>
+  <div class="svc-slide" onclick="event.stopPropagation();openTextZoom(this)">
+    <div class="svc-slide-dark" style="background:linear-gradient(160deg,#0a0a0a 0%,#100d0d 50%,#1a0e0e 100%);align-items:flex-start;justify-content:flex-start;padding:0;text-align:left;">
+      <div style="width:100%;padding:1.55rem 1.1rem 0.4rem;border-bottom:1px solid rgba(201,162,39,0.12);display:flex;justify-content:space-between;align-items:flex-end;flex-shrink:0;">
+        <span style="font-size:0.53rem;letter-spacing:0.24em;text-transform:uppercase;color:#a07f1a;">Larian Studios Writing Test</span>
+        <span style="font-size:0.5rem;letter-spacing:0.1em;color:#b85c5c;font-family:'Courier New',monospace;opacity:0.7;">INT. UNDERGROUND CHAMBER</span>
+      </div>
+      <div style="flex:1;padding:0.7rem 3rem;overflow:hidden;display:flex;flex-direction:column;gap:0.42rem;min-height:0;">
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div style="width:5px;height:5px;background:#4caf7d;border-radius:50%;flex-shrink:0;"></div>
+          <span style="font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#4caf7d;font-weight:600;">Player</span>
+        </div>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#9db8a8;line-height:1.5;margin:0 0 0.2rem 0;font-style:italic;">"You were searching for the treasure too, weren't you?"</p>
+        <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
+          <div style="width:5px;height:5px;background:#b85c5c;border-radius:50%;flex-shrink:0;"></div>
+          <span style="font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#b85c5c;font-weight:600;">Unknown</span>
+          <span style="font-size:0.5rem;color:#555;font-style:italic;">(steps out of the shadows)</span>
+        </div>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#ccc9c0;line-height:1.55;margin:0;">"Sorry, sorry. I haven't talked to a human in so long... except for Rand."</p>
+        <p style="font-size:0.63rem;color:#555;font-style:italic;margin:0;">(chuckles, points to a skull)</p>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#ccc9c0;line-height:1.55;margin:0;">"I'm Revrykal, the Varsh of Death. The servant and caretaker of death itself. I spread the fairy tale of riches buried in this chamber — we all came together, and then they lost their minds. I've been here alone ever since.<br>Now tell me, mortal... would you wish to be my ally? Or my enemy?"</p>
+        <div style="margin-top:auto;border-top:1px solid rgba(201,162,39,0.1);padding-top:0.45rem;display:flex;flex-direction:column;gap:0.3rem;">
+          <div style="display:flex;gap:0.5rem;align-items:baseline;">
+            <span style="color:#4caf7d;font-size:0.66rem;flex-shrink:0;">&#9672;</span>
+            <span style="font-size:0.67rem;color:#8db89e;line-height:1.4;">"Yes, I freed you. But I don't regret it."</span>
+          </div>
+          <div style="display:flex;gap:0.5rem;align-items:baseline;">
+            <span style="color:#4caf7d;font-size:0.66rem;flex-shrink:0;">&#9672;</span>
+            <span style="font-size:0.67rem;color:#8db89e;line-height:1.4;">"...I don't know. Maybe you're the treasure I was after."</span>
+          </div>
+        </div>
+      </div>
+      <div style="width:100%;padding:0.32rem 1.1rem;border-top:1px solid rgba(201,162,39,0.07);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#444;">Path B · Investigative Route</span>
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#666;">click to explore &#8594;</span>
+      </div>
+    </div>
+    <div class="svc-caption">Larian Studios Writing Test</div>
+  </div>
+
+  <div class="svc-slide" onclick="event.stopPropagation();openTextZoom(this)">
+    <div class="svc-slide-dark" style="background:linear-gradient(160deg,#0c0404 0%,#150808 55%,#1c0a0a 100%);align-items:flex-start;justify-content:flex-start;padding:0;text-align:left;">
+      <div style="width:100%;padding:1.55rem 1.1rem 0.4rem;border-bottom:1px solid rgba(180,60,60,0.2);display:flex;justify-content:space-between;align-items:flex-end;flex-shrink:0;">
+        <span style="font-size:0.53rem;letter-spacing:0.24em;text-transform:uppercase;color:#a07f1a;">Larian Studios Writing Test</span>
+        <span style="font-size:0.5rem;letter-spacing:0.1em;color:#b85c5c;font-family:'Courier New',monospace;opacity:0.7;">INT. UNDERGROUND CHAMBER</span>
+      </div>
+      <div style="flex:1;padding:0.7rem 3rem;overflow:hidden;display:flex;flex-direction:column;gap:0.42rem;min-height:0;">
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div style="width:5px;height:5px;background:#4caf7d;border-radius:50%;flex-shrink:0;"></div>
+          <span style="font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#4caf7d;font-weight:600;">Player</span>
+        </div>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#9db8a8;line-height:1.5;margin:0 0 0.2rem 0;font-style:italic;">"No. This wasn't my doing. I refuse to believe it. You're just taking advantage of my rage and doubts."</p>
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div style="width:5px;height:5px;background:#b85c5c;border-radius:50%;flex-shrink:0;"></div>
+          <span style="font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#b85c5c;font-weight:600;">Revrykal</span>
+        </div>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#ccc9c0;line-height:1.55;margin:0;">"Deny it all you wish. But the door was locked... and now I walk free again. The world will know what you've done, whether you accept it or not.<br>But I'll never forget how your death smells, human."</p>
+        <!-- cinematic -->
+        <div style="border-left:2px solid rgba(180,60,60,0.4);padding:0.35rem 0.6rem;background:rgba(180,60,60,0.05);margin-top:0.1rem;">
+          <span style="font-size:0.48rem;letter-spacing:0.18em;text-transform:uppercase;color:#7a3333;display:block;margin-bottom:0.2rem;">Cinematic</span>
+          <p style="font-family:Georgia,serif;font-size:0.65rem;color:#888;line-height:1.55;font-style:italic;margin:0;">A thin cut blooms on his hand — though no blade has touched it. Blood lifts from the wound, twisting through the air toward Revrykal's outstretched fingers... coiling into his palm like ink in water.</p>
+        </div>
+      </div>
+      <div style="width:100%;padding:0.32rem 1.1rem;border-top:1px solid rgba(180,60,60,0.12);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#444;">Ending IV · The Blood Mark</span>
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#666;">click to explore &#8594;</span>
+      </div>
+    </div>
+    <div class="svc-caption">Larian Studios Writing Test</div>
+  </div>
+  <div class="svc-slide" onclick="event.stopPropagation();openTextZoom(this)">
+    <div class="svc-slide-dark" style="background:linear-gradient(160deg,#060608 0%,#0b0b12 55%,#10101c 100%);align-items:flex-start;justify-content:flex-start;padding:0;text-align:left;">
+      <div style="width:100%;padding:1.55rem 1.1rem 0.4rem;border-bottom:1px solid rgba(201,162,39,0.1);display:flex;justify-content:space-between;align-items:flex-end;flex-shrink:0;">
+        <span style="font-size:0.53rem;letter-spacing:0.24em;text-transform:uppercase;color:#a07f1a;">Larian Studios Writing Test</span>
+        <span style="font-size:0.5rem;letter-spacing:0.1em;color:#b85c5c;font-family:'Courier New',monospace;opacity:0.7;">INT. UNDERGROUND CHAMBER</span>
+      </div>
+      <div style="flex:1;padding:0.7rem 3rem;overflow:hidden;display:flex;flex-direction:column;gap:0.42rem;min-height:0;">
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div style="width:5px;height:5px;background:#4caf7d;border-radius:50%;flex-shrink:0;"></div>
+          <span style="font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#4caf7d;font-weight:600;">Player</span>
+        </div>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#9db8a8;line-height:1.5;margin:0 0 0.2rem 0;font-style:italic;">"...I don't know. Maybe you're the treasure I was after."</p>
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div style="width:5px;height:5px;background:#b85c5c;border-radius:50%;flex-shrink:0;"></div>
+          <span style="font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#b85c5c;font-weight:600;">Revrykal</span>
+          <span style="font-size:0.5rem;color:#444;font-style:italic;">(after a silence, chuckles)</span>
+        </div>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#ccc9c0;line-height:1.55;margin:0;">"Fate. Such a delicate word to hide behind. But do not mistake fate for my mercy... I wonder if you, too, will change when the time comes. Or if you'll do what all mortals do..."</p>
+        <p style="font-size:0.63rem;color:#555;font-style:italic;margin:0;">(leans in slightly — showing his face for the first time)</p>
+        <p style="font-family:Georgia,serif;font-size:1.05rem;color:var(--gold);line-height:1;margin:0.1rem 0 0 0;letter-spacing:0.04em;">"Break."</p>
+        <!-- exit -->
+        <div style="margin-top:auto;">
+          <p style="font-family:Georgia,serif;font-size:0.63rem;color:#444;line-height:1.5;font-style:italic;margin:0;">And then, as if the darkness swallows him whole, he is gone.</p>
+        </div>
+      </div>
+      <div style="width:100%;padding:0.32rem 1.1rem;border-top:1px solid rgba(201,162,39,0.07);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#444;">Ending V · Break</span>
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#666;">click to explore &#8594;</span>
+      </div>
+    </div>
+    <div class="svc-caption">Larian Studios Writing Test</div>
+  </div>
+
+  <button class="svc-prev" onclick="event.stopPropagation();sliderPrev('slider-writing')">&#8249;</button>
+  <button class="svc-next" onclick="event.stopPropagation();sliderNext('slider-writing')">&#8250;</button>
+<div class="svc-dots">
+  <span class="svc-dot active" onclick="event.stopPropagation();sliderGo('slider-writing',0)"></span>
+  <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-writing',1)"></span>
+  <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-writing',2)"></span>
+  <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-writing',3)"></span>
+  </div>
+</div>
+    <div class="svc-content">
+      <button class="modal-close" onclick="closeModal('modal-svc-writing')">&times;</button>
+      <div class="modal-label">Service</div>
+      <h2 class="modal-title">Game Writing</h2>
+      <p class="modal-subtitle">Dialogue &middot; NPC Voices &middot; Environmental Storytelling</p>
+      <div class="modal-divider"></div>
+      <div class="modal-body">
+        <div style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#a07f1a;margin-bottom:0.35rem;">What I bring</div>
+        <p style="font-size:0.86rem;line-height:1.7;margin-bottom:1.1rem;">Good game writing doesn&rsquo;t announce itself. It works through what characters don&rsquo;t say as much as what they do, through choices that feel personal, and through lines written to land in context, not just on the page. I test every line against how it plays: does it serve the scene, the character, and the moment?</p>
+        <div style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#a07f1a;margin-bottom:0.5rem;">Key points</div>
+        <ul class="skill-list-svc">
+          <li>Character voice built into every line: vocabulary, rhythm, and what gets left unsaid</li>
+          <li>NPC voice design: distinct speech patterns, vocabulary, and emotional register per character</li>
+          <li>Branching conversations where player choices land differently on replay</li>
+          <li>Performance writing: voice direction, stage notes, and barks embedded in the script itself</li>
+        </ul>
+        <div style="margin-top:1.1rem;padding-top:0.9rem;border-top:1px solid rgba(201,162,39,0.2);">
+          <div style="font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:#555;margin-bottom:0.4rem;">Present across</div>
+          <div style="display:flex;flex-wrap:wrap;gap:0.4rem;"><span class="proj-tag" onclick="closeModal('modal-svc-writing');openModal('modal-larian')">Larian</span><span class="proj-tag" onclick="closeModal('modal-svc-writing');openModal('modal-nyck')">Nyck</span><span class="proj-tag" onclick="closeModal('modal-svc-writing');openModal('modal-soundon')">Sound ON!</span><span class="proj-tag" onclick="closeModal('modal-svc-writing');openModal('modal-azadi')">Azadi: New Moons</span><span class="proj-tag" onclick="closeModal('modal-svc-writing');openModal('modal-hungerless')">Hungerless</span><span class="proj-tag" onclick="closeModal('modal-svc-writing');openModal('modal-dante')">Dante Naraku!</span><span class="proj-tag" onclick="closeModal('modal-svc-writing');openModal('modal-mindless')">Mindless Breakpoint</span><span class="proj-tag" onclick="closeModal('modal-svc-writing');setTimeout(function(){document.getElementById('exercises').scrollIntoView({behavior:'smooth'});},300)">Studio Exercises & Personal Projects</span></div>
+        </div>
+      </div>
+      <div class="modal-links">
+        <a href="#work" onclick="closeModal('modal-svc-writing')" class="modal-link">View All Work &#8594;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-svc-gamedesign" onclick="closeModalOutside(event,'modal-svc-gamedesign')">
+  <div class="modal modal-service">
+    <div class="svc-slider" id="slider-gamedesign">
+  <div class="svc-hint">click to zoom</div>
+  <div class="svc-slide active" onclick="event.stopPropagation();openTextZoom(this)">
+    <div class="svc-slide-dark" style="background:linear-gradient(160deg,#040810 0%,#060b18 55%,#0a1020 100%);align-items:flex-start;justify-content:flex-start;padding:0;text-align:left;">
+      <div style="width:100%;padding:1.55rem 1.1rem 0.4rem;border-bottom:1px solid rgba(201,162,39,0.12);display:flex;justify-content:space-between;align-items:flex-end;flex-shrink:0;">
+        <span style="font-size:0.53rem;letter-spacing:0.24em;text-transform:uppercase;color:#a07f1a;">Space Rivals! &middot; Game Design Document</span>
+        <span style="font-size:0.5rem;letter-spacing:0.1em;color:#8fa89a;font-family:'Courier New',monospace;opacity:0.7;">SPACE_RIVALS_GDD.pdf</span>
+      </div>
+      <div style="flex:1;padding:0.7rem 1.1rem;overflow:hidden;display:flex;flex-direction:column;gap:0.35rem;min-height:0;">
+        <span style="font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:#c9a227;">MMORPG &middot; 3D &middot; Space Combat</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.22rem 0.6rem;margin-top:0.05rem;">
+          <div style="border-left:2px solid #4a5a8a;padding-left:0.35rem;"><span style="font-size:0.52rem;color:#6a8ab8;letter-spacing:0.1em;text-transform:uppercase;">Solaris</span><p style="font-size:0.52rem;color:#555;margin:0.05rem 0 0;">Solar Empire</p></div>
+          <div style="border-left:2px solid #6a3a8a;padding-left:0.35rem;"><span style="font-size:0.52rem;color:#9a6ab8;letter-spacing:0.1em;text-transform:uppercase;">Vortex</span><p style="font-size:0.52rem;color:#555;margin:0.05rem 0 0;">Void Collective</p></div>
+          <div style="border-left:2px solid #3a8a5a;padding-left:0.35rem;"><span style="font-size:0.52rem;color:#6ab878;letter-spacing:0.1em;text-transform:uppercase;">Orbis</span><p style="font-size:0.52rem;color:#555;margin:0.05rem 0 0;">Bio Dominion</p></div>
+          <div style="border-left:2px solid #8a6a3a;padding-left:0.35rem;"><span style="font-size:0.52rem;color:#b8986a;letter-spacing:0.1em;text-transform:uppercase;">Ferrum</span><p style="font-size:0.52rem;color:#555;margin:0.05rem 0 0;">Iron Foundry</p></div>
+          <div style="border-left:2px solid #8a3a3a;padding-left:0.35rem;"><span style="font-size:0.52rem;color:#b86a6a;letter-spacing:0.1em;text-transform:uppercase;">Tenebris</span><p style="font-size:0.52rem;color:#555;margin:0.05rem 0 0;">Shadow Syndicate</p></div>
+          <div style="border-left:2px solid #6a8a3a;padding-left:0.35rem;"><span style="font-size:0.52rem;color:#98b86a;letter-spacing:0.1em;text-transform:uppercase;">Aether</span><p style="font-size:0.52rem;color:#555;margin:0.05rem 0 0;">Psionic Council</p></div>
+        </div>
+        <div style="display:flex;gap:0.8rem;margin-top:0.05rem;flex-wrap:wrap;">
+          <span style="font-size:0.54rem;color:#777;">6 civ. &middot; 1 capital + 8 sectors each</span>
+          <span style="font-size:0.54rem;color:#555;">&middot;</span>
+          <span style="font-size:0.54rem;color:#777;">Neutral galaxy: 36 sectors</span>
+        </div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <span style="font-size:0.52rem;background:rgba(201,162,39,0.07);border:1px solid rgba(201,162,39,0.18);padding:0.1rem 0.35rem;color:#a07f1a;">PvP &amp; PvE</span>
+          <span style="font-size:0.52rem;background:rgba(201,162,39,0.07);border:1px solid rgba(201,162,39,0.18);padding:0.1rem 0.35rem;color:#a07f1a;">Crystals &amp; Ore</span>
+          <span style="font-size:0.52rem;background:rgba(201,162,39,0.07);border:1px solid rgba(201,162,39,0.18);padding:0.1rem 0.35rem;color:#a07f1a;">Player Cities</span>
+          <span style="font-size:0.52rem;background:rgba(201,162,39,0.07);border:1px solid rgba(201,162,39,0.18);padding:0.1rem 0.35rem;color:#a07f1a;">Reputation Economy</span>
+        </div>
+      </div>
+      <div style="width:100%;padding:0.32rem 1.1rem;border-top:1px solid rgba(201,162,39,0.07);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#444;">Full GDD &middot; Balance Document</span>
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#666;">click to explore &#8594;</span>
+      </div>
+    </div>
+    <div class="svc-caption">Space Rivals!</div>
+  </div>
+
+  <div class="svc-slide" onclick="event.stopPropagation();openLightbox('assets/img/space-rivals-balance.png','Space Rivals: Balance Table')">
+    <img src="assets/img/space-rivals-balance.png" alt="Space Rivals: Balance Table" loading="lazy">
+    <div class="svc-caption">Space Rivals: Balance Doc</div>
+  </div>
+  <div class="svc-slide" onclick="event.stopPropagation();openLightbox('assets/img/dante-karma-pricelist.png','Dante Naraku: Karma Price List')">
+    <img src="assets/img/dante-karma-pricelist.png" alt="Dante Naraku: Karma Price List" loading="lazy">
+    <div class="svc-caption">Dante Naraku: Karma Specs</div>
+  </div>
+  <div class="svc-slide" onclick="event.stopPropagation();openLightbox('assets/img/gameloft-core-loop.png','Gameloft BCN: Core Loop')">
+    <img src="assets/img/gameloft-core-loop.png" alt="Gameloft BCN: Core Loop" loading="lazy" style="object-fit:contain;background:#000;">
+    <div class="svc-caption">Core Loop - Gameloft: Game Design Test</div>
+  </div>
+  <button class="svc-prev" onclick="event.stopPropagation();sliderPrev('slider-gamedesign')">&#8249;</button>
+  <button class="svc-next" onclick="event.stopPropagation();sliderNext('slider-gamedesign')">&#8250;</button>
+<div class="svc-dots">
+  <span class="svc-dot active" onclick="event.stopPropagation();sliderGo('slider-gamedesign',0)"></span>
+  <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-gamedesign',1)"></span>
+  <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-gamedesign',2)"></span>
+  <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-gamedesign',3)"></span>
+  </div>
+</div>
+    <div class="svc-content">
+      <button class="modal-close" onclick="closeModal('modal-svc-gamedesign')">&times;</button>
+      <div class="modal-label">Service</div>
+      <h2 class="modal-title">Game Design</h2>
+      <p class="modal-subtitle">GDD Authoring &middot; Systems Design &middot; Production Documentation</p>
+      <div class="modal-divider"></div>
+      <div class="modal-body">
+        <div style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#a07f1a;margin-bottom:0.35rem;">What I bring</div>
+        <p style="font-size:0.86rem;line-height:1.7;margin-bottom:1.1rem;">Game design lives or dies in the gap between concept and implementation. A great idea that can&rsquo;t be documented clearly, balanced, or built by a team isn&rsquo;t a design: it&rsquo;s a note. I write full GDDs that hold together from the first mechanic to the final balance pass, structured so that any developer can pick them up and build.</p>
+        <div style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#a07f1a;margin-bottom:0.5rem;">Key points</div>
+        <ul class="skill-list-svc">
+          <li>Full GDD authoring: concept to production-ready spec, structured for developers not just designers</li>
+          <li>Systems thinking: mechanics, economy, and progression designed as a coherent whole</li>
+          <li>Balance documentation: damage curves, progression pacing, competitive viability across roles</li>
+          <li>Core loop design and mock-up creation: concept validated on paper before production begins</li>
+        </ul>
+        <div style="margin-top:1.1rem;padding-top:0.9rem;border-top:1px solid rgba(201,162,39,0.2);">
+          <div style="font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:#555;margin-bottom:0.4rem;">Present across</div>
+          <div style="display:flex;flex-wrap:wrap;gap:0.4rem;"><span class="proj-tag" onclick="closeModal('modal-svc-gamedesign');openModal('modal-space')">Space Rivals!</span><span class="proj-tag" onclick="closeModal('modal-svc-gamedesign');openModal('modal-dante')">Dante Naraku!</span><span class="proj-tag" onclick="closeModal('modal-svc-gamedesign');openModal('modal-hungerless')">Hungerless</span><span class="proj-tag" onclick="closeModal('modal-svc-gamedesign');openModal('modal-azadi')">Azadi: New Moons</span><span class="proj-tag" onclick="closeModal('modal-svc-gamedesign');openModal('modal-nyck')">Nyck</span><span class="proj-tag" onclick="closeModal('modal-svc-gamedesign');openModal('modal-soundon')">Sound ON!</span><span class="proj-tag" onclick="closeModal('modal-svc-gamedesign');openModal('modal-mindless')">Mindless Breakpoint</span><span class="proj-tag" onclick="closeModal('modal-svc-gamedesign');setTimeout(function(){document.getElementById('exercises').scrollIntoView({behavior:'smooth'});},300)">Studio Exercises & Personal Projects</span></div>
+        </div>
+      </div>
+      <div class="modal-links">
+        <a href="#work" onclick="closeModal('modal-svc-gamedesign')" class="modal-link">View All Work &#8594;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-svc-quest" onclick="closeModalOutside(event,'modal-svc-quest')">
+  <div class="modal modal-service">
+    <div class="svc-slider" id="slider-quest">
+  <div class="svc-hint">click to zoom</div>
+  <div class="svc-slide active" onclick="event.stopPropagation();openLightbox('assets/img/azadi-prologue-flowchart.webp','Azadi: Prologue Quest Flowchart')">
+    <img src="assets/img/azadi-prologue-flowchart.webp" alt="Azadi: Prologue Quest Flowchart" loading="lazy">
+    <div class="svc-caption">Azadi: Prologue Flowchart</div>
+  </div>
+  <div class="svc-slide" onclick="event.stopPropagation();openLightbox('assets/img/primorden-quest.png','Primorden: Shadows Unleashed Quest')">
+    <img src="assets/img/primorden-quest.png" alt="Primorden: Shadows Unleashed Quest" loading="lazy">
+    <div class="svc-caption">Primorden: Shadows Unleashed</div>
+  </div>
+  <div class="svc-slide" onclick="event.stopPropagation();openLightbox('assets/img/azadi-quest-study.webp','Azadi: Quest Study Flowchart')">
+    <img src="assets/img/azadi-quest-study.webp" alt="Azadi: Quest Study Flowchart" loading="lazy">
+    <div class="svc-caption">Azadi: Quest Study</div>
+  </div>
+  <div class="svc-slide" onclick="event.stopPropagation();openLightbox('assets/img/crystal-cave.png','Azadi: Crystal Cave Dungeon Map')">
+    <img src="assets/img/crystal-cave.png" alt="Azadi: Crystal Cave Dungeon Map" loading="lazy">
+    <div class="svc-caption">Azadi: Crystal Cave</div>
+  </div>
+  <button class="svc-prev" onclick="event.stopPropagation();sliderPrev('slider-quest')">&#8249;</button>
+  <button class="svc-next" onclick="event.stopPropagation();sliderNext('slider-quest')">&#8250;</button>
+<div class="svc-dots">
+  <span class="svc-dot active" onclick="event.stopPropagation();sliderGo('slider-quest',0)"></span>
+  <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-quest',1)"></span>
+  <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-quest',2)"></span>
+  <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-quest',3)"></span>
+  </div>
+</div>
+    <div class="svc-content">
+      <button class="modal-close" onclick="closeModal('modal-svc-quest')">&times;</button>
+      <div class="modal-label">Service</div>
+      <h2 class="modal-title">Quest Design</h2>
+      <p class="modal-subtitle">Branching Structures &middot; Moral Choices &middot; Player-Driven Outcomes</p>
+      <div class="modal-divider"></div>
+      <div class="modal-body">
+        <div style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#a07f1a;margin-bottom:0.35rem;">What I bring</div>
+        <p style="font-size:0.86rem;line-height:1.7;margin-bottom:1.1rem;">A quest is a promise: that the time spent will matter and the world will feel real. I design quest structures that fit the game they serve, whether that means branching paths, tightly scripted beats, or something in between. The goal is always the same: every step gives the player something worth experiencing, and the structure never gets in the way of that.</p>
+        <div style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#a07f1a;margin-bottom:0.5rem;">Key points</div>
+        <ul class="skill-list-svc">
+          <li>Multi-path flowcharts with every branch earned by player action, not randomness</li>
+          <li>Quests that reveal who the player is, who the NPCs are, and what the world holds, not just what gets unlocked</li>
+          <li>Multiple-act pacing applied to individual quest arcs, with a solid base that can be expanded: setup, complication, resolution</li>
+          <li>World-state integration: quests that shift meaning based on what the player already knows</li>
+        </ul>
+        <div style="margin-top:1.1rem;padding-top:0.9rem;border-top:1px solid rgba(201,162,39,0.2);">
+          <div style="font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:#555;margin-bottom:0.4rem;">Present across</div>
+          <div style="display:flex;flex-wrap:wrap;gap:0.4rem;"><span class="proj-tag" onclick="closeModal('modal-svc-quest');openModal('modal-azadi')">Azadi: New Moons</span><span class="proj-tag" onclick="closeModal('modal-svc-quest');openModal('modal-larian')">Larian</span><span class="proj-tag" onclick="closeModal('modal-svc-quest');openModal('modal-dante')">Dante Naraku!</span><span class="proj-tag" onclick="closeModal('modal-svc-quest');openModal('modal-hungerless')">Hungerless</span><span class="proj-tag" onclick="closeModal('modal-svc-quest');openModal('modal-soundon')">Sound ON!</span><span class="proj-tag" onclick="closeModal('modal-svc-quest');setTimeout(function(){document.getElementById('exercises').scrollIntoView({behavior:'smooth'});},300)">Studio Exercises & Personal Projects</span></div>
+        </div>
+      </div>
+      <div class="modal-links">
+        <a href="#work" onclick="closeModal('modal-svc-quest')" class="modal-link">View All Work &#8594;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-svc-script" onclick="closeModalOutside(event,'modal-svc-script')">
+  <div class="modal modal-service">
+    <div class="svc-slider" id="slider-script">
+  <div class="svc-hint">click to zoom</div>
+  <div class="svc-slide active" onclick="event.stopPropagation();openTextZoom(this)">
+    <div class="svc-slide-dark" style="background:linear-gradient(160deg,#060b18 0%,#090f20 55%,#0c1428 100%);align-items:flex-start;justify-content:flex-start;padding:0;text-align:left;">
+      <div style="width:100%;padding:1.55rem 1.1rem 0.4rem;border-bottom:1px solid rgba(201,162,39,0.12);display:flex;justify-content:space-between;align-items:flex-end;flex-shrink:0;">
+        <span style="font-size:0.53rem;letter-spacing:0.24em;text-transform:uppercase;color:#a07f1a;">QForMedia &middot; Voiceover Script</span>
+        <span style="font-size:0.5rem;letter-spacing:0.1em;color:#8fa89a;font-family:'Courier New',monospace;opacity:0.7;">PART_1_VO_Script.pdf</span>
+      </div>
+      <div style="flex:1;padding:0.7rem 1.1rem;overflow:hidden;display:flex;flex-direction:column;gap:0.32rem;min-height:0;">
+        <span style="font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:#c9a227;">FV4005 &middot; Cold War · 1967</span>
+        <p style="font-family:Georgia,serif;font-size:0.82rem;color:#ccc9c0;line-height:1.5;margin:0;font-style:italic;">&ldquo;Seven months. One impossible mission.&rdquo;</p>
+        <p style="font-family:Georgia,serif;font-size:0.67rem;color:#999;line-height:1.5;margin:0;">A secret restoration team rebuilds the FV4005 from classified blueprints &mdash; to bring it to Tankfest. For the first time ever.</p>
+        <div style="display:flex;flex-direction:column;gap:0.2rem;margin-top:0.05rem;">
+          <div style="display:flex;gap:0.4rem;align-items:baseline;"><span style="color:#c9a227;font-size:0.6rem;flex-shrink:0;">&#9654;</span><span style="font-size:0.62rem;color:#aaa;">Full VO script with direction notes</span></div>
+          <div style="display:flex;gap:0.4rem;align-items:baseline;"><span style="color:#c9a227;font-size:0.6rem;flex-shrink:0;">&#9654;</span><span style="font-size:0.62rem;color:#aaa;">Pacing, tone, and emphasis marked per line</span></div>
+          <div style="display:flex;gap:0.4rem;align-items:baseline;"><span style="color:#c9a227;font-size:0.6rem;flex-shrink:0;">&#9654;</span><span style="font-size:0.62rem;color:#aaa;">Written for professional production</span></div>
+        </div>
+      </div>
+      <div style="width:100%;padding:0.32rem 1.1rem;border-top:1px solid rgba(201,162,39,0.07);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#888;">VO Script &middot; Studio Exercise</span>
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#999;">click to explore &#8594;</span>
+      </div>
+    </div>
+    <div class="svc-caption">QForMedia: Voiceover Script</div>
+  </div>
+  <div class="svc-slide" onclick="event.stopPropagation();openTextZoom(this)">
+    <div class="svc-slide-dark" style="background:linear-gradient(160deg,#060608 0%,#0b0b12 55%,#10101c 100%);align-items:flex-start;justify-content:flex-start;padding:0;text-align:left;">
+      <div style="width:100%;padding:1.55rem 1.1rem 0.4rem;border-bottom:1px solid rgba(201,162,39,0.1);display:flex;justify-content:space-between;align-items:flex-end;flex-shrink:0;">
+        <span style="font-size:0.53rem;letter-spacing:0.24em;text-transform:uppercase;color:#a07f1a;">Larian Studios Writing Test</span>
+        <span style="font-size:0.5rem;letter-spacing:0.1em;color:#b85c5c;font-family:'Courier New',monospace;opacity:0.7;">INT. UNDERGROUND CHAMBER</span>
+      </div>
+      <div style="flex:1;padding:0.7rem 3rem;overflow:hidden;display:flex;flex-direction:column;gap:0.42rem;min-height:0;">
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div style="width:5px;height:5px;background:#4caf7d;border-radius:50%;flex-shrink:0;"></div>
+          <span style="font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#4caf7d;font-weight:600;">Player</span>
+        </div>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#9db8a8;line-height:1.5;margin:0 0 0.2rem 0;font-style:italic;">"...I don't know. Maybe you're the treasure I was after."</p>
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div style="width:5px;height:5px;background:#b85c5c;border-radius:50%;flex-shrink:0;"></div>
+          <span style="font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#b85c5c;font-weight:600;">Revrykal</span>
+          <span style="font-size:0.5rem;color:#444;font-style:italic;">(after a silence, chuckles)</span>
+        </div>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#ccc9c0;line-height:1.55;margin:0;">"Fate. Such a delicate word to hide behind. But do not mistake fate for my mercy... I wonder if you, too, will change when the time comes. Or if you'll do what all mortals do..."</p>
+        <p style="font-size:0.63rem;color:#555;font-style:italic;margin:0;">(leans in slightly — showing his face for the first time)</p>
+        <p style="font-family:Georgia,serif;font-size:1.05rem;color:var(--gold);line-height:1;margin:0.1rem 0 0 0;letter-spacing:0.04em;">"Break."</p>
+        <!-- exit -->
+        <div style="margin-top:auto;">
+          <p style="font-family:Georgia,serif;font-size:0.63rem;color:#444;line-height:1.5;font-style:italic;margin:0;">And then, as if the darkness swallows him whole, he is gone.</p>
+        </div>
+      </div>
+      <div style="width:100%;padding:0.32rem 1.1rem;border-top:1px solid rgba(201,162,39,0.07);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#444;">Ending V · Break</span>
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#666;">click to explore &#8594;</span>
+      </div>
+    </div>
+    <div class="svc-caption">Larian Studios Writing Test</div>
+  </div>
+    <div class="svc-slide" onclick="event.stopPropagation();openTextZoom(this)">
+    <div class="svc-slide-dark" style="background:linear-gradient(160deg,#050a18 0%,#080e22 55%,#0b1230 100%);align-items:flex-start;justify-content:flex-start;padding:0;text-align:left;">
+      <div style="width:100%;padding:1.55rem 1.1rem 0.4rem;border-bottom:1px solid rgba(201,162,39,0.12);display:flex;justify-content:space-between;align-items:flex-end;flex-shrink:0;">
+        <span style="font-size:0.53rem;letter-spacing:0.24em;text-transform:uppercase;color:#a07f1a;">QForMedia &middot; FV4005 Restoration</span>
+        <span style="font-size:0.5rem;letter-spacing:0.1em;color:#8fa89a;font-family:'Courier New',monospace;opacity:0.7;">[00:02:15] &mdash; [00:04:35]</span>
+      </div>
+      <div style="flex:1;padding:0.7rem 1.1rem;overflow:hidden;display:flex;flex-direction:column;gap:0.32rem;min-height:0;">
+        <span style="font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:#888;">[00:02:15]</span>
+        <p style="font-family:Georgia,serif;font-size:0.67rem;color:#ccc9c0;line-height:1.55;margin:0;">&ldquo;What may have looked like surface rust at first often turns out to be much more serious once the metal is fully revealed.&rdquo;</p>
+        <span style="font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin-top:0.15rem;">[00:04:35]</span>
+        <p style="font-family:Georgia,serif;font-size:0.67rem;color:#ccc9c0;line-height:1.55;margin:0;">&ldquo;A military green finish is sprayed across the chassis &mdash; it transforms the vehicle from repaired steel into something that finally looks alive again.&rdquo;</p>
+        <p style="font-family:Georgia,serif;font-size:0.64rem;color:#666;line-height:1.5;font-style:italic;margin:0.05rem 0 0;">But appearance alone is only part of the story. The mechanical work is still far from over.</p>
+      </div>
+      <div style="width:100%;padding:0.32rem 1.1rem;border-top:1px solid rgba(201,162,39,0.07);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#888;">VO Script &middot; Timestamps &middot; Cinematic Pacing</span>
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#999;">click to explore &#8594;</span>
+      </div>
+    </div>
+    <div class="svc-caption">QForMedia: FV4005</div>
+  </div>
+  <button class="svc-prev" onclick="event.stopPropagation();sliderPrev('slider-script')">&#8249;</button>
+  <button class="svc-next" onclick="event.stopPropagation();sliderNext('slider-script')">&#8250;</button>
+<div class="svc-dots">
+  <span class="svc-dot active" onclick="event.stopPropagation();sliderGo('slider-script',0)"></span>
+  <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-script',1)"></span>
+  <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-script',2)"></span>
+  </div>
+</div>
+    <div class="svc-content">
+      <button class="modal-close" onclick="closeModal('modal-svc-script')">&times;</button>
+      <div class="modal-label">Service</div>
+      <h2 class="modal-title">Scriptwriting</h2>
+      <p class="modal-subtitle">Voiceover &middot; Cutscenes &middot; Cinematic Dialogue</p>
+      <div class="modal-divider"></div>
+      <div class="modal-body">
+        <div style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#a07f1a;margin-bottom:0.35rem;">What I bring</div>
+        <p style="font-size:0.86rem;line-height:1.7;margin-bottom:1.1rem;">A script is not just text: it&rsquo;s instructions for a performance. Line breaks, emphasis, tone shifts, pauses: all of that lives in the writing before it reaches the director or the actor. I write scripts that communicate intent clearly, so the performance begins on the page and arrives intact on screen.</p>
+        <div style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#a07f1a;margin-bottom:0.5rem;">Key points</div>
+        <ul class="skill-list-svc">
+          <li>VO scripts built for production: pacing, breath marks, and emphasis in the text itself</li>
+          <li>Cutscene structure: visual storytelling through dialogue and stage direction, not just words</li>
+          <li>Subtext and economy: every line pulls double duty, character plus plot, or character plus world</li>
+          <li>Format discipline: production-ready scripts that hand off cleanly to directors and voice actors</li>
+        </ul>
+        <div style="margin-top:1.1rem;padding-top:0.9rem;border-top:1px solid rgba(201,162,39,0.2);">
+          <div style="font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:#555;margin-bottom:0.4rem;">Present across</div>
+          <div style="display:flex;flex-wrap:wrap;gap:0.4rem;"><span class="proj-tag" onclick="closeModal('modal-svc-script');setTimeout(function(){document.getElementById('exercises').scrollIntoView({behavior:'smooth'});},300)">QForMedia</span><span class="proj-tag" onclick="closeModal('modal-svc-script');openModal('modal-larian')">Larian</span></div>
+        </div>
+      </div>
+      <div class="modal-links">
+        <a href="#work" onclick="closeModal('modal-svc-script')" class="modal-link">View All Work &#8594;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-svc-localization" onclick="closeModalOutside(event,'modal-svc-localization')">
+  <div class="modal modal-service">
+    <div class="svc-slider" id="slider-localization">
+  <div class="svc-hint">click to zoom</div>
+  <div class="svc-slide active" onclick="event.stopPropagation();openTextZoom(this)">
+    <div class="svc-slide-dark" style="background:linear-gradient(160deg,#040a08 0%,#071210 55%,#0a1814 100%);align-items:flex-start;justify-content:flex-start;padding:0;text-align:left;">
+      <div style="width:100%;padding:1.55rem 1.1rem 0.4rem;border-bottom:1px solid rgba(201,162,39,0.12);display:flex;justify-content:space-between;align-items:flex-end;flex-shrink:0;">
+        <span style="font-size:0.53rem;letter-spacing:0.24em;text-transform:uppercase;color:#a07f1a;">Sound ON! &middot; IT/EN Localization</span>
+        <span style="font-size:0.5rem;letter-spacing:0.1em;color:#8fa89a;font-family:'Courier New',monospace;opacity:0.7;">GLOBAL_GAME_JAM_2022.pdf</span>
+      </div>
+      <div style="flex:1;padding:0.7rem 1.1rem;overflow:hidden;display:flex;flex-direction:column;gap:0.28rem;min-height:0;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.3rem 0.7rem;">
+          <div style="display:flex;flex-direction:column;gap:0.18rem;">
+            <span style="font-size:0.52rem;letter-spacing:0.12em;text-transform:uppercase;color:#78a890;">Italiano</span>
+            <div style="display:flex;flex-direction:column;gap:0.14rem;">
+              <div><span style="font-size:0.55rem;color:#c9a227;font-weight:600;">Tommy</span><p style="font-family:Georgia,serif;font-size:0.6rem;color:#ccc9c0;line-height:1.45;margin:0.04rem 0 0;">&ldquo;Quindi sei un pittore! E cosa dipingi?&rdquo;</p></div>
+              <div><span style="font-size:0.55rem;color:#78a890;font-weight:600;">Ethan</span><p style="font-family:Georgia,serif;font-size:0.6rem;color:#c0d8cc;line-height:1.45;margin:0.04rem 0 0;">&ldquo;Sogno di rendere immortali i miei quadri!&rdquo;</p></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.18rem;">
+            <span style="font-size:0.52rem;letter-spacing:0.12em;text-transform:uppercase;color:#a0b8c8;">English</span>
+            <div style="display:flex;flex-direction:column;gap:0.14rem;">
+              <div><span style="font-size:0.55rem;color:#c9a227;font-weight:600;">Tommy</span><p style="font-family:Georgia,serif;font-size:0.6rem;color:#ccc9c0;line-height:1.45;margin:0.04rem 0 0;">&ldquo;So you&rsquo;re a painter! What do you paint?&rdquo;</p></div>
+              <div><span style="font-size:0.55rem;color:#a0b8c8;font-weight:600;">Ethan</span><p style="font-family:Georgia,serif;font-size:0.6rem;color:#c0ccd8;line-height:1.45;margin:0.04rem 0 0;">&ldquo;I dream of making my paintings immortal!&rdquo;</p></div>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.58rem;color:#666;font-style:italic;margin:0.05rem 0 0;">Global Game Jam 2022 &mdash; bilingual dialogue written to preserve character voice across both languages.</p>
+      </div>
+      <div style="width:100%;padding:0.32rem 1.1rem;border-top:1px solid rgba(201,162,39,0.07);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#888;">Native IT &middot; Fluent EN &middot; Cultural Adaptation</span>
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#999;">click to explore &#8594;</span>
+      </div>
+    </div>
+    <div class="svc-caption">Sound ON!</div>
+  </div>
+  <div class="svc-slide" onclick="event.stopPropagation();openTextZoom(this)">
+    <div class="svc-slide-dark" style="background:linear-gradient(160deg,#060808 0%,#0a0f12 55%,#0e1418 100%);align-items:flex-start;justify-content:flex-start;padding:0;text-align:left;">
+      <div style="width:100%;padding:1.55rem 1.1rem 0.4rem;border-bottom:1px solid rgba(201,162,39,0.12);display:flex;justify-content:space-between;align-items:flex-end;flex-shrink:0;">
+        <span style="font-size:0.53rem;letter-spacing:0.24em;text-transform:uppercase;color:#a07f1a;">Amazon Games &middot; Multilingual Support</span>
+        <span style="font-size:0.5rem;letter-spacing:0.1em;color:#8fa89a;font-family:'Courier New',monospace;opacity:0.7;">New World &amp; Lost Ark</span>
+      </div>
+      <div style="flex:1;padding:0.7rem 1.1rem;overflow:hidden;display:flex;flex-direction:column;gap:0.32rem;min-height:0;">
+        <span style="font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:#c9a227;">AAA European Launches</span>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.05rem;">
+          <span style="font-size:0.65rem;color:#ccc9c0;font-weight:600;">New World</span>
+          <span style="font-size:0.52rem;color:#888;">&middot;</span>
+          <span style="font-size:0.65rem;color:#ccc9c0;font-weight:600;">Lost Ark</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.2rem;">
+          <div style="display:flex;gap:0.4rem;align-items:baseline;"><span style="color:#c9a227;font-size:0.6rem;flex-shrink:0;">&#9654;</span><span style="font-size:0.63rem;color:#aaa;">Player support &amp; community management (IT/EN/ES)</span></div>
+          <div style="display:flex;gap:0.4rem;align-items:baseline;"><span style="color:#c9a227;font-size:0.6rem;flex-shrink:0;">&#9654;</span><span style="font-size:0.63rem;color:#aaa;">Content moderation &amp; multilingual enforcement</span></div>
+          <div style="display:flex;gap:0.4rem;align-items:baseline;"><span style="color:#c9a227;font-size:0.6rem;flex-shrink:0;">&#9654;</span><span style="font-size:0.63rem;color:#aaa;">Ban &amp; enforcement review across languages</span></div>
+        </div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.05rem;">
+          <span style="font-size:0.52rem;background:rgba(201,162,39,0.07);border:1px solid rgba(201,162,39,0.18);padding:0.1rem 0.35rem;color:#a07f1a;">IT</span>
+          <span style="font-size:0.52rem;background:rgba(201,162,39,0.07);border:1px solid rgba(201,162,39,0.18);padding:0.1rem 0.35rem;color:#a07f1a;">EN</span>
+          <span style="font-size:0.52rem;background:rgba(201,162,39,0.07);border:1px solid rgba(201,162,39,0.18);padding:0.1rem 0.35rem;color:#a07f1a;">ES</span>
+        </div>
+      </div>
+      <div style="width:100%;padding:0.32rem 1.1rem;border-top:1px solid rgba(201,162,39,0.07);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#888;">Amazon Games EU &middot; 2021&ndash;2023</span>
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#999;">click to explore &#8594;</span>
+      </div>
+    </div>
+    <div class="svc-caption">New World · Lost Ark</div>
+  </div>
+  <div class="svc-slide" onclick="event.stopPropagation();openTextZoom(this)">
+    <div class="svc-slide-dark" style="background:linear-gradient(160deg,#080406 0%,#100608 55%,#180c10 100%);align-items:flex-start;justify-content:flex-start;padding:0;text-align:left;">
+      <div style="width:100%;padding:1.55rem 1.1rem 0.4rem;border-bottom:1px solid rgba(201,162,39,0.12);display:flex;justify-content:space-between;align-items:flex-end;flex-shrink:0;">
+        <span style="font-size:0.53rem;letter-spacing:0.24em;text-transform:uppercase;color:#a07f1a;">Dante Naraku! &middot; Cultural Bridge</span>
+        <span style="font-size:0.5rem;letter-spacing:0.1em;color:#8fa89a;font-family:'Courier New',monospace;opacity:0.7;">Vigamus &times; Vantan</span>
+      </div>
+      <div style="flex:1;padding:0.7rem 1.1rem;overflow:hidden;display:flex;flex-direction:column;gap:0.28rem;min-height:0;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.3rem 0.8rem;">
+          <div style="border-left:2px solid #8a6a3a;padding-left:0.4rem;">
+            <span style="font-size:0.55rem;color:#c9a227;letter-spacing:0.1em;text-transform:uppercase;">Dante (IT)</span>
+            <p style="font-size:0.6rem;color:#ccc9c0;line-height:1.4;margin:0.1rem 0 0;">Divine Comedy &mdash; 9 Circles, theological hierarchy, sin as structure</p>
+          </div>
+          <div style="border-left:2px solid #6a3a8a;padding-left:0.4rem;">
+            <span style="font-size:0.55rem;color:#9a6ab8;letter-spacing:0.1em;text-transform:uppercase;">Naraku (JP)</span>
+            <p style="font-size:0.6rem;color:#c8c0d8;line-height:1.4;margin:0.1rem 0 0;">Hell of corruption &mdash; transformation through darkness, fluid identity</p>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.18rem;margin-top:0.05rem;">
+          <div style="display:flex;gap:0.4rem;align-items:baseline;"><span style="color:#c9a227;font-size:0.6rem;flex-shrink:0;">&#9654;</span><span style="font-size:0.62rem;color:#aaa;">EN game bible + IT design notes + JP collaboration</span></div>
+          <div style="display:flex;gap:0.4rem;align-items:baseline;"><span style="color:#c9a227;font-size:0.6rem;flex-shrink:0;">&#9654;</span><span style="font-size:0.62rem;color:#aaa;">Lead after team restructuring &mdash; creative bridge role</span></div>
+        </div>
+      </div>
+      <div style="width:100%;padding:0.32rem 1.1rem;border-top:1px solid rgba(201,162,39,0.07);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#888;">Italy &ndash; Japan Co-production</span>
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#999;">click to explore &#8594;</span>
+      </div>
+    </div>
+    <div class="svc-caption">Dante Naraku!</div>
+  </div>
+  <button class="svc-prev" onclick="event.stopPropagation();sliderPrev('slider-localization')">&#8249;</button>
+  <button class="svc-next" onclick="event.stopPropagation();sliderNext('slider-localization')">&#8250;</button>
+<div class="svc-dots">
+  <span class="svc-dot active" onclick="event.stopPropagation();sliderGo('slider-localization',0)"></span>
+  <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-localization',1)"></span>
+  <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-localization',2)"></span>
+  </div>
+</div>
+    <div class="svc-content">
+      <button class="modal-close" onclick="closeModal('modal-svc-localization')">&times;</button>
+      <div class="modal-label">Service</div>
+      <h2 class="modal-title">Localization (IT/EN/ES)</h2>
+      <p class="modal-subtitle">Italian &middot; English &middot; Spanish &middot; Cultural Adaptation</p>
+      <div class="modal-divider"></div>
+      <div class="modal-body">
+        <div style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#a07f1a;margin-bottom:0.35rem;">What I bring</div>
+        <p style="font-size:0.86rem;line-height:1.7;margin-bottom:1.1rem;">Localization fails when it stops at translation. A joke that doesn&rsquo;t land, a tone that shifts between scenes, a character who sounds different in every language: these are failures of adaptation, not vocabulary. I work in three languages natively and approach every text the same way: what does this need to feel like, and how do I make it feel that way here?</p>
+        <div style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#a07f1a;margin-bottom:0.5rem;">Key points</div>
+        <ul class="skill-list-svc">
+          <li>Idiomatic adaptation: preserving tone, humor, and emotional register, not just meaning</li>
+          <li>Character voice across languages (IT/EN/ES): speech patterns and personality intact after translation</li>
+          <li>Cultural mediation: knowing what reads naturally vs. what needs reframing per market</li>
+          <li>Multilingual consistency: catching tone drift, false cognates, and register mismatches</li>
+        </ul>
+        <div style="margin-top:1.1rem;padding-top:0.9rem;border-top:1px solid rgba(201,162,39,0.2);">
+          <div style="font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:#555;margin-bottom:0.4rem;">Present across</div>
+          <div style="display:flex;flex-wrap:wrap;gap:0.4rem;"><span class="proj-tag" onclick="closeModal('modal-svc-localization');openModal('modal-soundon')">Sound ON!</span><span class="proj-tag" onclick="closeModal('modal-svc-localization');openModal('modal-dante')">Dante Naraku!</span><span class="proj-tag" onclick="closeModal('modal-svc-localization');openModal('modal-newworld')">New World</span><span class="proj-tag" onclick="closeModal('modal-svc-localization');openModal('modal-lostark')">Lost Ark</span></div>
+        </div>
+      </div>
+      <div class="modal-links">
+        <a href="#work" onclick="closeModal('modal-svc-localization')" class="modal-link">View All Work &#8594;</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-azadi" onclick="closeModalOutside(event,'modal-azadi')">
+  <div class="modal modal-project-modal" style="display:grid;grid-template-columns:0.82fr 1fr;grid-template-rows:400px auto;padding:0;max-width:min(900px,94vw);position:relative;">
+  <div class="proj-top" style="grid-column:1/-1;grid-row:1;display:flex;flex-direction:row;height:400px;overflow:hidden;">
+    <div class="svc-slider" id="slider-azadi">
+      <div class="svc-hint">click image to zoom</div>
+      <div class="svc-slide active" onclick="event.stopPropagation();openLightbox('assets/img/azadi-moonboard.webp','Azadi: Mood Board')">
+        <img src="assets/img/azadi-moonboard.webp" alt="Azadi: Mood Board" loading="lazy">
+        <div class="svc-caption">Mood Board</div>
+      </div>
+      <div class="svc-slide" onclick="event.stopPropagation();openLightbox('assets/img/azadi-flowchart.webp','Azadi: Quest Flowchart')">
+        <img src="assets/img/azadi-flowchart.webp" alt="Azadi: Quest Flowchart" loading="lazy">
+        <div class="svc-caption">Quest Flowchart</div>
+      </div>
+      <div class="svc-slide" onclick="event.stopPropagation();openLightbox('assets/img/azadi-trello.png','Azadi: Narrative Tasks Board')">
+        <img src="assets/img/azadi-trello.png" alt="Azadi: Narrative Tasks Board" loading="lazy">
+        <div class="svc-caption">Narrative Tasks Board</div>
+      </div>
+      <div class="svc-slide" onclick="event.stopPropagation();openLightbox('assets/img/azadi-character1.webp','Azadi Character')">
+        <img src="assets/img/azadi-character1.webp" alt="Azadi Character" loading="lazy">
+        <div class="svc-caption">Character Art</div>
+      </div>
+      <div class="svc-slide" onclick="event.stopPropagation();openLightbox('assets/img/azadi-character2.webp','Azadi Character 2')">
+        <img src="assets/img/azadi-character2.webp" alt="Azadi Character 2" loading="lazy">
+        <div class="svc-caption">Character Art</div>
+      </div>
+      <div class="svc-slide" onclick="event.stopPropagation();openLightbox('assets/img/azadi-anakchi.webp','Anakchi')">
+        <img src="assets/img/azadi-anakchi.webp" alt="Anakchi" loading="lazy">
+        <div class="svc-caption">Anakchi</div>
+      </div>
+      <div class="svc-slide" onclick="event.stopPropagation();openLightbox('assets/img/azadi-auronis.webp','Auronis the Archforcer')">
+        <img src="assets/img/azadi-auronis.webp" alt="Auronis the Archforcer" loading="lazy">
+        <div class="svc-caption">Auronis the Archforcer</div>
+      </div>
+      <button class="svc-prev" onclick="event.stopPropagation();sliderPrev('slider-azadi')">&#8249;</button>
+      <button class="svc-next" onclick="event.stopPropagation();sliderNext('slider-azadi')">&#8250;</button>
+      <div class="svc-dots">
+        <span class="svc-dot active" onclick="event.stopPropagation();sliderGo('slider-azadi',0)"></span>
+        <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-azadi',1)"></span>
+        <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-azadi',2)"></span>
+        <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-azadi',3)"></span>
+        <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-azadi',4)"></span>
+        <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-azadi',5)"></span>
+        <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-azadi',6)"></span>
+      </div>
+    </div>
+    <div class="proj-header">
+
+    <button class="modal-close" onclick="closeModal('modal-azadi')">&times;</button>
+    <div class="modal-label">Tier S &middot; Case Study</div>
+    <h2 class="modal-title">Azadi: New Moons</h2>
+    <p class="modal-subtitle">Open-World Action MMORPG &middot; Unreal Engine 5</p>
+    <div class="meta-grid">
+      <div><div class="meta-key">Genre</div><div class="meta-val">Open-World MMORPG
+    </div>
+  </div>
+</div>
+      <div><div class="meta-key">Platform</div><div class="meta-val">PC</div></div>
+      <div><div class="meta-key">Engine</div><div class="meta-val">Unreal Engine 5</div></div>
+      <div><div class="meta-key">Role</div><div class="meta-val">Narrative Designer &amp; Writer</div></div>
+    <div class="modal-divider"></div>
+    </div>
+  </div>
+  <div class="proj-body" style="grid-column:1/-1;grid-row:2;padding:1.5rem 2.5rem 2rem;">
+    <div class="modal-body">
+      <div class="modal-section-title">The Project</div>
+      <p><em>Azadi</em> (&ldquo;freedom&rdquo; in many languages) is a story-driven open-world action MMORPG blending Medieval Fantasy and Sci-Fi. Four moons orbit the planet (Caddan, Modre, Sor, Yesh), each affecting the world&rsquo;s ecosystem and narrative. Players explore with total autonomy: no hand-holding, no forced path.</p>
+      <div class="modal-section-title">Collaboration with Konrad</div>
+      <p>I worked in close collaboration with project lead <strong>Konrad</strong> on all narrative and writing work, maintaining alignment between world vision and design direction at every stage of development.</p>
+      <div class="modal-section-title">Contribution</div>
+      <ul>
+        <li>Complete <strong>world lore</strong>: four kingdoms, six Moon-Touched races, cosmology, cultural systems &mdash; across 15+ documents</li>
+        <li><strong>Character dialogues</strong>, quest narratives, NPC bios, dungeon lore, and the prologue cinematic</li>
+        <li><strong>Branching quest flowcharts</strong> with 3-act structure and multiple player-driven outcomes</li>
+        <li>Contributions to <strong>GDD v1.6</strong>: Moon Energy Mastery, elemental abilities, progression, AI creature hierarchy</li>
+        <li><strong>Azadi Market</strong> economy design and player crafting pipeline</li>
+      </ul>
+    </div>
+    <div class="modal-links" style="flex-wrap:wrap;gap:0.5rem;">
+      <a href="assets/docs/azadi-gdd.pdf" target="_blank" class="modal-link">Full GDD</a>
+      <a href="assets/docs/azadi-lore.pdf" target="_blank" class="modal-link">Lore Doc</a>
+      <a href="assets/docs/azadi-dialogues.pdf" target="_blank" class="modal-link">Dialogues</a>
+      <a href="assets/docs/azadi-kingdoms.pdf" target="_blank" class="modal-link">Kingdoms</a>
+      <a href="assets/docs/azadi-characters.pdf" target="_blank" class="modal-link">Characters</a>
+      <a href="assets/docs/azadi-races.pdf" target="_blank" class="modal-link">Moon Touched Races</a>
+      <a href="assets/docs/azadi-locations.pdf" target="_blank" class="modal-link">Locations</a>
+      <a href="assets/docs/azadi-names.pdf" target="_blank" class="modal-link">Names &amp; Lore</a>
+      <a href="assets/docs/azadi-ancient-quest.pdf" target="_blank" class="modal-link">Ancient Quest</a>
+      <a href="assets/docs/azadi-dungeon.pdf" target="_blank" class="modal-link">Dungeon: Crystal Cave</a>
+      <a href="assets/docs/azadi-emberbone.pdf" target="_blank" class="modal-link">Emberbone Bow</a>
+      <a href="assets/docs/azadi-surtr.pdf" target="_blank" class="modal-link">Surtr</a>
+      <a href="assets/docs/azadi-storyboard.pdf" target="_blank" class="modal-link">Opening Storyboard</a>
+      <a href="assets/docs/azadi-prologue-flowchart.pdf" target="_blank" class="modal-link">Prologue Flowchart</a>
+      <a href="assets/docs/azadi-flowchart-q1-5.pdf" target="_blank" class="modal-link">Quest Flowchart Q1&ndash;5</a>
+      <a href="assets/docs/azadi-prologue-map.pdf" target="_blank" class="modal-link">Prologue Map</a>
+      <a class="modal-link" style="cursor:pointer;" onclick="event.preventDefault();openLightbox('assets/img/azadi-flowchart.webp','Azadi: Quest Flowchart');" href="#">Quest Flowchart &#8594;</a>
+      <a href="https://store.steampowered.com/app/3297490/New_Moons/" target="_blank" rel="noopener" class="modal-link">Steam &#8594;</a>
+    </div>
+  </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-larian" onclick="closeModalOutside(event,'modal-larian')">
+  <div class="modal modal-project-modal" style="display:grid;grid-template-columns:0.82fr 1fr;grid-template-rows:400px auto;padding:0;max-width:min(900px,94vw);position:relative;">
+  <div class="proj-top">
+    <div class="svc-slider" id="slider-larian-modal">
+      <div class="svc-hint">click to zoom</div>
+      <div class="svc-slide active" onclick="event.stopPropagation();openTextZoom(this)">
+    <div class="svc-slide-dark" style="background:linear-gradient(160deg,#07090f 0%,#0e1520 60%,#141c2e 100%);align-items:flex-start;justify-content:flex-start;padding:0;text-align:left;">
+      <!-- header bar: taller so hint doesn't overlap text -->
+      <div style="width:100%;padding:1.55rem 1.1rem 0.4rem;border-bottom:1px solid rgba(201,162,39,0.12);display:flex;justify-content:space-between;align-items:flex-end;flex-shrink:0;">
+        <span style="font-size:0.53rem;letter-spacing:0.24em;text-transform:uppercase;color:#a07f1a;">Larian Studios Writing Test</span>
+        <span style="font-size:0.5rem;letter-spacing:0.1em;color:#b85c5c;font-family:'Courier New',monospace;opacity:0.7;">INT. UNDERGROUND CHAMBER</span>
+      </div>
+      <div style="flex:1;padding:0.7rem 3rem;overflow:hidden;display:flex;flex-direction:column;gap:0.42rem;min-height:0;">
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div style="width:5px;height:5px;background:#4caf7d;border-radius:50%;flex-shrink:0;"></div>
+          <span style="font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#4caf7d;font-weight:600;">Player</span>
+        </div>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#9db8a8;line-height:1.5;margin:0 0 0.2rem 0;font-style:italic;">"So you're just some lunatic who enjoys watching people die?"</p>
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div style="width:5px;height:5px;background:#b85c5c;border-radius:50%;flex-shrink:0;"></div>
+          <span style="font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#b85c5c;font-weight:600;">Unknown</span>
+        </div>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#ccc9c0;line-height:1.55;margin:0;">"A lunatic? Oh, you think so little of me? I do enjoy watching people die. That's part of my nature. Death holds something cryptic, something visceral. In death's instant, a life flashes — a final moment, full of every choice, every regret."</p>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#ccc9c0;line-height:1.55;margin:0;">"Death is a blessing. It feels extraordinary when you are the one to decide when and how it comes. I'd call myself more of a <em>fanatic</em> than a lunatic."</p>
+        <div style="margin-top:auto;border-top:1px solid rgba(201,162,39,0.1);padding-top:0.45rem;display:flex;flex-direction:column;gap:0.3rem;">
+          <div style="display:flex;gap:0.5rem;align-items:baseline;">
+            <span style="color:#4caf7d;font-size:0.66rem;flex-shrink:0;">&#9672;</span>
+            <span style="font-size:0.67rem;color:#8db89e;line-height:1.4;">"What are you, some kind of <em>god</em>?"</span>
+          </div>
+          <div style="display:flex;gap:0.5rem;align-items:baseline;">
+            <span style="color:#4caf7d;font-size:0.66rem;flex-shrink:0;">&#9672;</span>
+            <span style="font-size:0.67rem;color:#8db89e;line-height:1.4;">"I've had enough of your madness."</span>
+          </div>
+        </div>
+      </div>
+      <div style="width:100%;padding:0.32rem 1.1rem;border-top:1px solid rgba(201,162,39,0.07);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#444;">Path A · Confrontational Route</span>
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#666;">click to explore &#8594;</span>
+      </div>
+    </div>
+    <div class="svc-caption">Larian Studios Writing Test</div>
+  </div>
+      <div class="svc-slide" onclick="event.stopPropagation();openTextZoom(this)">
+    <div class="svc-slide-dark" style="background:linear-gradient(160deg,#0a0a0a 0%,#100d0d 50%,#1a0e0e 100%);align-items:flex-start;justify-content:flex-start;padding:0;text-align:left;">
+      <div style="width:100%;padding:1.55rem 1.1rem 0.4rem;border-bottom:1px solid rgba(201,162,39,0.12);display:flex;justify-content:space-between;align-items:flex-end;flex-shrink:0;">
+        <span style="font-size:0.53rem;letter-spacing:0.24em;text-transform:uppercase;color:#a07f1a;">Larian Studios Writing Test</span>
+        <span style="font-size:0.5rem;letter-spacing:0.1em;color:#b85c5c;font-family:'Courier New',monospace;opacity:0.7;">INT. UNDERGROUND CHAMBER</span>
+      </div>
+      <div style="flex:1;padding:0.7rem 3rem;overflow:hidden;display:flex;flex-direction:column;gap:0.42rem;min-height:0;">
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div style="width:5px;height:5px;background:#4caf7d;border-radius:50%;flex-shrink:0;"></div>
+          <span style="font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#4caf7d;font-weight:600;">Player</span>
+        </div>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#9db8a8;line-height:1.5;margin:0 0 0.2rem 0;font-style:italic;">"You were searching for the treasure too, weren't you?"</p>
+        <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
+          <div style="width:5px;height:5px;background:#b85c5c;border-radius:50%;flex-shrink:0;"></div>
+          <span style="font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#b85c5c;font-weight:600;">Unknown</span>
+          <span style="font-size:0.5rem;color:#555;font-style:italic;">(steps out of the shadows)</span>
+        </div>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#ccc9c0;line-height:1.55;margin:0;">"Sorry, sorry. I haven't talked to a human in so long... except for Rand."</p>
+        <p style="font-size:0.63rem;color:#555;font-style:italic;margin:0;">(chuckles, points to a skull)</p>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#ccc9c0;line-height:1.55;margin:0;">"I'm Revrykal, the Varsh of Death. The servant and caretaker of death itself. I spread the fairy tale of riches buried in this chamber — we all came together, and then they lost their minds. I've been here alone ever since.<br>Now tell me, mortal... would you wish to be my ally? Or my enemy?"</p>
+        <div style="margin-top:auto;border-top:1px solid rgba(201,162,39,0.1);padding-top:0.45rem;display:flex;flex-direction:column;gap:0.3rem;">
+          <div style="display:flex;gap:0.5rem;align-items:baseline;">
+            <span style="color:#4caf7d;font-size:0.66rem;flex-shrink:0;">&#9672;</span>
+            <span style="font-size:0.67rem;color:#8db89e;line-height:1.4;">"Yes, I freed you. But I don't regret it."</span>
+          </div>
+          <div style="display:flex;gap:0.5rem;align-items:baseline;">
+            <span style="color:#4caf7d;font-size:0.66rem;flex-shrink:0;">&#9672;</span>
+            <span style="font-size:0.67rem;color:#8db89e;line-height:1.4;">"...I don't know. Maybe you're the treasure I was after."</span>
+          </div>
+        </div>
+      </div>
+      <div style="width:100%;padding:0.32rem 1.1rem;border-top:1px solid rgba(201,162,39,0.07);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#444;">Path B · Investigative Route</span>
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#666;">click to explore &#8594;</span>
+      </div>
+    </div>
+    <div class="svc-caption">Larian Studios Writing Test</div>
+  </div>
+      <div class="svc-slide" onclick="event.stopPropagation();openTextZoom(this)">
+    <div class="svc-slide-dark" style="background:linear-gradient(160deg,#0c0404 0%,#150808 55%,#1c0a0a 100%);align-items:flex-start;justify-content:flex-start;padding:0;text-align:left;">
+      <div style="width:100%;padding:1.55rem 1.1rem 0.4rem;border-bottom:1px solid rgba(180,60,60,0.2);display:flex;justify-content:space-between;align-items:flex-end;flex-shrink:0;">
+        <span style="font-size:0.53rem;letter-spacing:0.24em;text-transform:uppercase;color:#a07f1a;">Larian Studios Writing Test</span>
+        <span style="font-size:0.5rem;letter-spacing:0.1em;color:#b85c5c;font-family:'Courier New',monospace;opacity:0.7;">INT. UNDERGROUND CHAMBER</span>
+      </div>
+      <div style="flex:1;padding:0.7rem 3rem;overflow:hidden;display:flex;flex-direction:column;gap:0.42rem;min-height:0;">
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div style="width:5px;height:5px;background:#4caf7d;border-radius:50%;flex-shrink:0;"></div>
+          <span style="font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#4caf7d;font-weight:600;">Player</span>
+        </div>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#9db8a8;line-height:1.5;margin:0 0 0.2rem 0;font-style:italic;">"No. This wasn't my doing. I refuse to believe it. You're just taking advantage of my rage and doubts."</p>
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div style="width:5px;height:5px;background:#b85c5c;border-radius:50%;flex-shrink:0;"></div>
+          <span style="font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#b85c5c;font-weight:600;">Revrykal</span>
+        </div>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#ccc9c0;line-height:1.55;margin:0;">"Deny it all you wish. But the door was locked... and now I walk free again. The world will know what you've done, whether you accept it or not.<br>But I'll never forget how your death smells, human."</p>
+        <!-- cinematic -->
+        <div style="border-left:2px solid rgba(180,60,60,0.4);padding:0.35rem 0.6rem;background:rgba(180,60,60,0.05);margin-top:0.1rem;">
+          <span style="font-size:0.48rem;letter-spacing:0.18em;text-transform:uppercase;color:#7a3333;display:block;margin-bottom:0.2rem;">Cinematic</span>
+          <p style="font-family:Georgia,serif;font-size:0.65rem;color:#888;line-height:1.55;font-style:italic;margin:0;">A thin cut blooms on his hand — though no blade has touched it. Blood lifts from the wound, twisting through the air toward Revrykal's outstretched fingers... coiling into his palm like ink in water.</p>
+        </div>
+      </div>
+      <div style="width:100%;padding:0.32rem 1.1rem;border-top:1px solid rgba(180,60,60,0.12);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#444;">Ending IV · The Blood Mark</span>
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#666;">click to explore &#8594;</span>
+      </div>
+    </div>
+    <div class="svc-caption">Larian Studios Writing Test</div>
+  </div>
+      <div class="svc-slide" onclick="event.stopPropagation();openTextZoom(this)">
+    <div class="svc-slide-dark" style="background:linear-gradient(160deg,#060608 0%,#0b0b12 55%,#10101c 100%);align-items:flex-start;justify-content:flex-start;padding:0;text-align:left;">
+      <div style="width:100%;padding:1.55rem 1.1rem 0.4rem;border-bottom:1px solid rgba(201,162,39,0.1);display:flex;justify-content:space-between;align-items:flex-end;flex-shrink:0;">
+        <span style="font-size:0.53rem;letter-spacing:0.24em;text-transform:uppercase;color:#a07f1a;">Larian Studios Writing Test</span>
+        <span style="font-size:0.5rem;letter-spacing:0.1em;color:#b85c5c;font-family:'Courier New',monospace;opacity:0.7;">INT. UNDERGROUND CHAMBER</span>
+      </div>
+      <div style="flex:1;padding:0.7rem 3rem;overflow:hidden;display:flex;flex-direction:column;gap:0.42rem;min-height:0;">
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div style="width:5px;height:5px;background:#4caf7d;border-radius:50%;flex-shrink:0;"></div>
+          <span style="font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#4caf7d;font-weight:600;">Player</span>
+        </div>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#9db8a8;line-height:1.5;margin:0 0 0.2rem 0;font-style:italic;">"...I don't know. Maybe you're the treasure I was after."</p>
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div style="width:5px;height:5px;background:#b85c5c;border-radius:50%;flex-shrink:0;"></div>
+          <span style="font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:#b85c5c;font-weight:600;">Revrykal</span>
+          <span style="font-size:0.5rem;color:#444;font-style:italic;">(after a silence, chuckles)</span>
+        </div>
+        <p style="font-family:Georgia,serif;font-size:0.72rem;color:#ccc9c0;line-height:1.55;margin:0;">"Fate. Such a delicate word to hide behind. But do not mistake fate for my mercy... I wonder if you, too, will change when the time comes. Or if you'll do what all mortals do..."</p>
+        <p style="font-size:0.63rem;color:#555;font-style:italic;margin:0;">(leans in slightly — showing his face for the first time)</p>
+        <p style="font-family:Georgia,serif;font-size:1.05rem;color:var(--gold);line-height:1;margin:0.1rem 0 0 0;letter-spacing:0.04em;">"Break."</p>
+        <!-- exit -->
+        <div style="margin-top:auto;">
+          <p style="font-family:Georgia,serif;font-size:0.63rem;color:#444;line-height:1.5;font-style:italic;margin:0;">And then, as if the darkness swallows him whole, he is gone.</p>
+        </div>
+      </div>
+      <div style="width:100%;padding:0.32rem 1.1rem;border-top:1px solid rgba(201,162,39,0.07);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#444;">Ending V · Break</span>
+        <span style="font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#666;">click to explore &#8594;</span>
+      </div>
+    </div>
+    <div class="svc-caption">Larian Studios Writing Test</div>
+  </div>
+      <button class="svc-prev" onclick="event.stopPropagation();sliderPrev('slider-larian-modal')">&#8249;</button>
+      <button class="svc-next" onclick="event.stopPropagation();sliderNext('slider-larian-modal')">&#8250;</button>
+      <div class="svc-dots">
+        <span class="svc-dot active" onclick="event.stopPropagation();sliderGo('slider-larian-modal',0)"></span>
+        <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-larian-modal',1)"></span>
+        <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-larian-modal',2)"></span>
+        <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-larian-modal',3)"></span>
+      </div>
+    </div>
+    <div class="proj-header">
+    <button class="modal-close" onclick="closeModal('modal-larian')">&times;</button>
+    <div class="modal-label">Tier S &middot; Professional Writing Test</div>
+    <h2 class="modal-title">Larian Studios Writing Test</h2>
+    <p class="modal-subtitle">Branching Interactive Dialogue &middot; Dark Fantasy &middot; Sent by Larian Studios</p>
+    <div class="meta-grid">
+      <div><div class="meta-key">Format</div><div class="meta-val">Twine + Scripts
+    
+  </div>
+</div>
+      <div><div class="meta-key">Endings</div><div class="meta-val">5 distinct paths</div></div>
+      <div><div class="meta-key">Tone</div><div class="meta-val">Dark Fantasy / BG3</div></div>
+      <div><div class="meta-key">Type</div><div class="meta-val">Professional Test</div></div>
+    </div>
+    <div class="modal-divider"></div>
+    </div>
+  </div>
+  <div class="proj-body">
+    <div class="modal-body">
+      <p style="font-size:0.82rem;color:var(--muted);font-style:italic;margin-bottom:1.2rem;padding:0.8rem 1rem;border-left:2px solid var(--gold);background:rgba(201,162,39,0.04);">Larian Studios reached out directly and sent this test as part of their hiring process for a writing position. The assessment ran over <strong>two weeks</strong>. I made the shortlist. They ultimately went with another candidate, but this is what I submitted.</p>
+      <div class="modal-section-title">The Brief</div>
+      <p>The test brief: create a memorable NPC encounter that demands a genuine choice, not a combat encounter, but a <em>dialogue</em> that reveals who the player really is.</p>
+      <div class="modal-section-title">Revrykal: The Varsh of Death</div>
+      <p><strong>Revrykal</strong> is not death itself: he is its caretaker. Ancient, imprisoned in a forgotten ruin, awakened by the player breaking through a collapsing wall. Dignified, melancholic, and alien in his perspective on mortality.</p>
+      <div class="modal-section-title">The Five Endings</div>
+      <ul>
+        <li><strong>Fight:</strong> Player attacks &mdash; defeated effortlessly, then spared and released, unimpressed</li>
+        <li><strong>Diplomatic Reveal:</strong> Patient investigation, learns Revrykal&rsquo;s true identity</li>
+        <li><strong>Accept Responsibility:</strong> &ldquo;Yes, I freed you, I don&rsquo;t regret it&rdquo; &mdash; an alliance is offered</li>
+        <li><strong>Denial:</strong> &ldquo;This wasn&rsquo;t my doing&rdquo; &mdash; a blood-mark left as a promise</li>
+        <li><strong>Fate:</strong> &ldquo;Maybe you&rsquo;re the treasure I was after&rdquo; &mdash; player becomes part of his mythology</li>
+      </ul>
+
+
+    </div>
+    <div class="modal-links">
+      <a href="assets/docs/larian-revrykal.pdf" target="_blank" class="modal-link">Full Submission PDF &#8594;</a>
+      <a href="assets/docs/larian-writing-test.html" target="_blank" class="modal-link">Interactive Dialogue &#8594;</a>
+    </div>
+  </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-hungerless" onclick="closeModalOutside(event,'modal-hungerless')">
+  <div class="modal modal-project-modal" style="display:grid;grid-template-columns:0.82fr 1fr;grid-template-rows:400px auto;padding:0;max-width:min(900px,94vw);position:relative;">
+  <div class="proj-top">
+    <div class="svc-slider" id="slider-hungerless-modal">
+      <div class="svc-hint">click image to zoom</div>
+      <div class="svc-slide active" onclick="event.stopPropagation();openLightbox('assets/img/hungerless.webp','Hungerless')">
+        <img src="assets/img/hungerless.webp" alt="Hungerless" loading="lazy">
+        <div class="svc-caption">Hungerless · Unreal Engine 5</div>
+      </div>
+    </div>
+    <div class="proj-header">
+    <button class="modal-close" onclick="closeModal('modal-hungerless')">&times;</button>
+    <div class="modal-label">Tier S &middot; Case Study</div>
+    <h2 class="modal-title">Hungerless</h2>
+    <p class="modal-subtitle">First-Person Psychological Adventure &middot; Unreal Engine 5</p>
+    <div class="meta-grid">
+      <div><div class="meta-key">Genre</div><div class="meta-val">Psychological Adventure
+    
+  </div>
+</div>
+      <div><div class="meta-key">Platform</div><div class="meta-val">PC</div></div>
+      <div><div class="meta-key">Engine</div><div class="meta-val">Unreal Engine 5</div></div>
+      <div><div class="meta-key">Role</div><div class="meta-val">Game &amp; Narrative Designer</div></div>
+    </div>
+    <div class="modal-divider"></div>
+    </div>
+  </div>
+  <div class="proj-body">
+    <div class="modal-body">
+      <div class="modal-section-title">The Project</div>
+      <p><em>Hungerless</em> is a first-person psychological adventure set in a surreal, obscure atmosphere. Protagonist: <strong>Victoria</strong>, isolated in her apartment, unemployed, tormented by <strong>Bulimia Nervosa</strong> (an eating disorder) and by a spectral presence called the Mistress. The Mistress is not a villain. She is a mirror.</p>
+      <p>Players inhabit Victoria&rsquo;s distorted perception: controlling food and emotions, navigating denial, using a smartphone as both narrative tool and puzzle element. Environmental design shifts with her psychological state.</p>
+      <div class="modal-section-title">Gameplay Design</div>
+      <ul>
+        <li>Core mechanics built around <strong>ED symptoms as gameplay systems</strong>: control, denial, distorted self-image</li>
+        <li>Smartphone integration &mdash; web searches and chat messages as narrative and puzzle elements</li>
+        <li>Environmental puzzles that change with Victoria&rsquo;s psychological state</li>
+        <li>First-person perspective reinforces the claustrophobic, subjective experience</li>
+      </ul>
+      <div class="modal-section-title">Recognition</div>
+      <p>Exhibited with a <strong>dedicated stand at Romics</strong>, Italy&rsquo;s largest gaming and comics convention. Also <strong>3rd place at <a href="https://www.zagarologamecity.com/" target="_blank" rel="noopener">Zagarolo Game House – IV Call</a></strong>.</p>
+    </div>
+    <div class="modal-section-title" style="margin-top:1.2rem;">Development Status</div>
+      <p>After Romics, the team and I went separate ways. The project is continuing development independently under <strong>Bastet Paw</strong>. Due to an NDA, I cannot share further materials &mdash; including the trailer shown at the Romics stand. You can follow the project&rsquo;s ongoing development at the link below.</p>
+    <p style="margin:0 0 1rem;font-size:0.85rem;color:#888;">The Design Notes document was authored independently for the Zagarolo Game House presentation — it is my own work and can be shared freely.</p>
+    <div class="modal-links">
+      <a href="assets/docs/hungerless-design-notes.pdf" target="_blank" class="modal-link">Design Notes</a>
+      <a href="https://www.bastetpaw.com/" target="_blank" rel="noopener" class="modal-link">Bastet Paw &#8599;</a>
+    </div>
+  </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-dante" onclick="closeModalOutside(event,'modal-dante')">
+  <div class="modal modal-project-modal" style="display:grid;grid-template-columns:0.82fr 1fr;grid-template-rows:400px auto;padding:0;max-width:min(900px,94vw);position:relative;">
+  <div class="proj-top" style="grid-column:1/-1;grid-row:1;display:flex;flex-direction:row;height:400px;overflow:hidden;">
+    <div class="svc-slider" id="slider-dante">
+      <div class="svc-hint">click image to zoom</div>
+      <div class="svc-slide active" onclick="event.stopPropagation();openLightbox('assets/img/dante-menu-chart.png','Dante Naraku Menu Chart')">
+        <img src="assets/img/dante-menu-chart.png" alt="Dante Naraku Menu Chart" loading="lazy">
+        <div class="svc-caption">Menu Chart</div>
+      </div>
+      <div class="svc-slide" onclick="event.stopPropagation();openLightbox('assets/img/dante-ui-alpha.png','Dante Naraku UI Schematics Alpha')">
+        <img src="assets/img/dante-ui-alpha.png" alt="Dante Naraku UI Alpha" loading="lazy">
+        <div class="svc-caption">UI Schematics Alpha</div>
+      </div>
+      <div class="svc-slide" onclick="event.stopPropagation();openLightbox('assets/img/dante-ui-beta.png','Dante Naraku UI Schematics Beta')">
+        <img src="assets/img/dante-ui-beta.png" alt="Dante Naraku UI Beta" loading="lazy">
+        <div class="svc-caption">UI Schematics Beta</div>
+      </div>
+      <div class="svc-slide" onclick="event.stopPropagation();openLightbox('assets/img/dante-proposal1.png','Dante Naraku Proposal 1')">
+        <img src="assets/img/dante-proposal1.png" alt="Dante Naraku Proposal 1" loading="lazy">
+        <div class="svc-caption">Proposal 1</div>
+      </div>
+      <div class="svc-slide" onclick="event.stopPropagation();openLightbox('assets/img/dante-proposal2.png','Dante Naraku Proposal 2')">
+        <img src="assets/img/dante-proposal2.png" alt="Dante Naraku Proposal 2" loading="lazy">
+        <div class="svc-caption">Proposal 2</div>
+      </div>
+      <div class="svc-slide" onclick="event.stopPropagation();openLightbox('assets/img/dante-proposal3.png','Dante Naraku Proposal 3')">
+        <img src="assets/img/dante-proposal3.png" alt="Dante Naraku Proposal 3" loading="lazy">
+        <div class="svc-caption">Proposal 3</div>
+      </div>
+      <button class="svc-prev" onclick="event.stopPropagation();sliderPrev('slider-dante')">&#8249;</button>
+      <button class="svc-next" onclick="event.stopPropagation();sliderNext('slider-dante')">&#8250;</button>
+      <div class="svc-dots">
+        <span class="svc-dot active" onclick="event.stopPropagation();sliderGo('slider-dante',0)"></span>
+        <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-dante',1)"></span>
+        <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-dante',2)"></span>
+        <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-dante',3)"></span>
+        <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-dante',4)"></span>
+        <span class="svc-dot" onclick="event.stopPropagation();sliderGo('slider-dante',5)"></span>
+      </div>
+    </div>
+    <div class="proj-header">
+
+    <button class="modal-close" onclick="closeModal('modal-dante')">&times;</button>
+    <div class="modal-label">Tier S &middot; Case Study</div>
+    <h2 class="modal-title">Dante Naraku!</h2>
+    <p class="modal-subtitle">Infinito 3 &middot; Action Roguelite &middot; Italy &times; Japan &middot; Supervised by Suda51</p>
+    <div class="meta-grid">
+      <div><div class="meta-key">Genre</div><div class="meta-val">Action Roguelite
+    </div>
+  </div>
+</div>
+      <div><div class="meta-key">Style</div><div class="meta-val">Sidescroller, Run n Gun</div></div>
+      <div><div class="meta-key">Supervision</div><div class="meta-val">Suda51</div></div>
+      <div><div class="meta-key">Role</div><div class="meta-val">Lead Game &amp; Narrative Designer</div></div>
+    <div class="modal-divider"></div>
+    </div>
+  </div>
+  <div class="proj-body" style="grid-column:1/-1;grid-row:2;padding:1.5rem 2.5rem 2rem;">
+    <div class="modal-body">
+      <div class="modal-section-title">The Project</div>
+      <p>A fast-paced sidescrolling action roguelite fusing two mythological hells: <strong>Dante&rsquo;s Inferno</strong> from the Divine Comedy and <strong>Naraku</strong>, the labyrinthine hell of Japanese mythology. The protagonist D. descends through Naraku in search of his kidnapped beloved, aided by Beatrice and tempted by Lucifer&rsquo;s sins. The deeper he goes, the more he sins, the worse his ultimate fate. High difficulty, run &rsquo;n gun combat, and a Karma system that makes moral choices mechanically consequential.</p>
+      <div class="modal-section-title">Italy&ndash;Japan Collaboration</div>
+      <p>A cross-cultural co-production between <strong>Vigamus Academy</strong> (Rome) and <strong>Vantan Academy</strong> (Tokyo), supervised by <strong>Suda51</strong>, creator of Killer7, No More Heroes, Shadows of the Damned. I served as the <strong>creative communication bridge</strong>: aligning narrative concepts and mediating cultural differences in game design philosophy.</p>
+      <p>The project was developed within Vigamus Academy&rsquo;s professional game design program. Following a team restructuring mid-development, I assumed the Lead Game &amp; Narrative Design role, stepping in to take ownership of the creative direction and drive the project to completion.</p>
+      <div class="modal-section-title">Systems Designed</div>
+      <ul>
+        <li><strong>Karma system:</strong> every action shifts karma on a white-to-red gauge, affecting the final boss</li>
+        <li><strong>Seven Deadly Sins</strong> as power-ups &mdash; altar pickups providing tactical advantages at a narrative cost</li>
+        <li><strong>Holy Machinarium:</strong> real-time in-motion skill tree using souls from enemies</li>
+        <li>Diary/Datalog: persistent lore entries unlocked through exploration</li>
+      </ul>
+    </div>
+    <div class="modal-links">
+      <a href="assets/docs/dante-game-bible.pdf" target="_blank" class="modal-link">Game Bible</a>
+      <a href="assets/docs/dante-gdd.pdf" target="_blank" class="modal-link">GDD</a>
+      <a href="assets/docs/dante-combat.pdf" target="_blank" class="modal-link">Combat System</a>
+      <a href="assets/docs/dante-enemies.pdf" target="_blank" class="modal-link">Enemies</a>
+      <a href="assets/docs/dante-karma.pdf" target="_blank" class="modal-link">Karma Specs</a>
+    </div>
+  </div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-nyck" onclick="closeModalOutside(event,'modal-nyck')">
+  <div class="modal modal-project-modal" style="display:grid;grid-template-columns:0.82fr 1fr;grid-template-rows:400px auto;padding:0;max-width:min(900px,94vw);position:relative;">
+  <div class="proj-top">
+    <div class="svc-slider" id="slider-nyck-modal">
+      <div class="svc-hint">click image to zoom</div>
+      <div class="svc-slide active" onclick="event.stopPropagation();openLightbox('assets/img/nyck.png','Nyck: Shadow of Evil')">
+        <img src="assets/img/nyck.png" alt="Nyck: Shadow of Evil" loading="lazy">
+        <div class="svc-caption">Nyck: Shadow of Evil</div>
+      </div>
+    </div>
+    <div class="proj-header">
+    <button class="modal-close" onclick="closeModal('modal-nyck')">&times;</button>
+    <div class="modal-label">Tier A &middot; Featured Project</div>
+    <h2 class="modal-title">Nyck: Shadow of Evil</h2>
+    <p class="modal-subtitle">Pixel Art Point &amp; Click Adventure &middot; Itamde</p>
+    <div class="meta-grid">
+      <div><div class="meta-key">Genre</div><div class="meta-val">Point &amp; Click Adventure
+    
+  </div>
+</div>
+      <div><div class="meta-key">Style</div><div class="meta-val">Pixel Art, Noir</div></div>
+      <div><div class="meta-key">Studio</div><div class="meta-val">Itamde</div></div>
+      <div><div class="meta-key">Role</div><div class="meta-val">Game &amp; Narrative Designer &amp; Writer</div></div>
+    </div>
+    <div class="modal-divider"></div>
+    </div>
+  </div>
+  <div class="proj-body">
+    <div class="modal-body">
+      <div class="modal-section-title">The Story</div>
+      <p><strong>Nyck</strong> is a gruff, solitary private detective. A missing girl case pulls her into a mystery that spirals beyond anything ordinary, leading to the hidden walls of an opera house, where a kidnapper uses elaborate traps to make the search seem supernatural. The game challenges player perception: what looks paranormal is always human.</p>
+      <p>Currently includes a complete prologue (&ldquo;Nyck &mdash; The Beginning&rdquo;), with an epilogue in development. The final game revolves around puzzles and the world of opera as both setting and thematic vehicle.</p>
+      <div class="modal-section-title">My Contribution</div>
+      <ul>
+        <li>Narrative structure and story design for the prologue and full-game arc</li>
+        <li>Character development for Nyck and supporting cast</li>
+        <li>Original storytelling documents and mystery structure design</li>
+        <li>Game design on puzzle logic and investigation flow</li>
+        <li>Cutscene writing and dialogue</li>
+      </ul>
+    </div>
+    <div class="modal-links">
+      <a href="assets/docs/nyck-storytelling.pdf" target="_blank" class="modal-link">Storytelling Doc (EN)</a>
+        <a href="assets/docs/nyck-storytelling-it.pdf" target="_blank" class="modal-link">Storytelling Doc (IT)</a>
+      <a href="https://itamde.itch.io/nyck-the-beginning" target="_blank" rel="noopener" class="modal-link">Play on Itch.io &#8594;</a>
+      <a href="https://www.youtube.com/watch?v=HL5LesFomeg" target="_blank" rel="noopener" class="modal-link">First Cutscene &#8594;</a>
+      <a href="https://itamde.com/en/project/nyck-shadow-of-evil/" target="_blank" rel="noopener" class="modal-link">Studio Page &#8594;</a>
+    </div>
+  </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-soundon" onclick="closeModalOutside(event,'modal-soundon')">
+  <div class="modal modal-project-modal" style="display:grid;grid-template-columns:0.82fr 1fr;grid-template-rows:400px auto;padding:0;max-width:min(900px,94vw);position:relative;">
+  <div class="proj-top">
+    <div class="svc-slider" id="slider-soundon-modal">
+      <div class="svc-hint">click image to zoom</div>
+      <div class="svc-slide active" onclick="event.stopPropagation();openLightbox('assets/img/soundon.jpg','Sound ON!')">
+        <img src="assets/img/soundon.jpg" alt="Sound ON!" loading="lazy">
+        <div class="svc-caption">Sound ON! · Global Game Jam 2022</div>
+      </div>
+    </div>
+    <div class="proj-header">
+    <button class="modal-close" onclick="closeModal('modal-soundon')">&times;</button>
+    <div class="modal-label">Tier A &middot; Featured Project</div>
+    <h2 class="modal-title">Sound ON!</h2>
+    <p class="modal-subtitle">Global Game Jam 2022 &middot; 72 Hours &middot; Theme: Dualism</p>
+    <div class="meta-grid">
+      <div><div class="meta-key">Event</div><div class="meta-val">GGJ 2022
+    
+  </div>
+</div>
+      <div><div class="meta-key">Duration</div><div class="meta-val">72 hours</div></div>
+      <div><div class="meta-key">Theme</div><div class="meta-val">Dualism</div></div>
+      <div><div class="meta-key">Role</div><div class="meta-val">Solo Game &amp; Narrative Designer &amp; Writer</div></div>
+    </div>
+    <div class="modal-divider"></div>
+    </div>
+  </div>
+  <div class="proj-body">
+    <div class="modal-body">
+      <div class="modal-section-title">The Concept</div>
+      <p><strong>Tommy</strong>, an 11-year-old dreaming of becoming a guitarist, enters a world where adults have lost all color and joy. His guitar lights everything up. Adults appear grey and uniform; Tommy&rsquo;s world responds to his creativity and music.</p>
+      <p>The game captures the dualism between adult rationality and childhood instinct: monochrome vs. multicolor, programming vs. discovery, malaise vs. wonder.</p>
+      <div class="modal-section-title">My Contribution</div>
+      <ul>
+        <li>Full dialogue system: Tommy, Stang (the cat guide), and Doozy (best friend)</li>
+        <li>Character arcs and emotional beats compressed into 72 hours</li>
+        <li>Game design on puzzle structure, tying music mechanics to emotional progression</li>
+      </ul>
+    </div>
+    <div class="modal-links">
+      <a href="assets/docs/soundon-gjj2022.pdf" target="_blank" class="modal-link">Design Doc</a>
+      <a href="https://nicololombino.itch.io/sound-on" target="_blank" rel="noopener" class="modal-link">Play on Itch.io &#8594;</a>
+      <a href="https://www.youtube.com/watch?v=XzMwULKxLq0" target="_blank" rel="noopener" class="modal-link">Dialogue Showcase &#8594;</a>
+      <a href="https://www.youtube.com/watch?v=R_1HzUMLmP4" target="_blank" rel="noopener" class="modal-link">Gameplay &#8594;</a>
+    </div>
+  </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-space" onclick="closeModalOutside(event,'modal-space')">
+  <div class="modal modal-project-modal" style="display:grid;grid-template-columns:0.82fr 1fr;grid-template-rows:400px auto;padding:0;max-width:min(900px,94vw);position:relative;">
+  <div class="proj-top">
+    <div class="svc-slider" id="slider-space-modal">
+      <div class="svc-slide active">
+        <div class="svc-slide-dark" style="background:linear-gradient(160deg,#05030c 0%,#0a0618 55%,#130b28 100%);align-items:center;justify-content:center;text-align:center;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.9rem;padding:2rem;">
+            <div style="font-size:0.48rem;letter-spacing:0.32em;text-transform:uppercase;color:#a07f1a;opacity:0.85;">Original IP &middot; Freelance Commission</div>
+            <div style="font-family:Georgia,serif;font-size:2.1rem;color:#f0ede6;letter-spacing:0.06em;line-height:1.1;">SPACE RIVALS!</div>
+            <div style="font-size:0.68rem;letter-spacing:0.16em;text-transform:uppercase;color:#c9a227;border-top:1px solid rgba(201,162,39,0.3);padding-top:0.6rem;">MMORPG &middot; 3D Space Simulator</div>
+            <div style="display:flex;gap:1.8rem;flex-wrap:wrap;justify-content:center;margin-top:0.4rem;">
+              <div style="text-align:center;">
+                <div style="font-family:Georgia,serif;font-size:1.5rem;color:#c9a227;font-weight:700;line-height:1;">6</div>
+                <div style="font-size:0.46rem;letter-spacing:0.14em;text-transform:uppercase;color:#555;margin-top:0.15rem;">Civilizations</div>
+              </div>
+              <div style="text-align:center;">
+                <div style="font-family:Georgia,serif;font-size:1.5rem;color:#c9a227;font-weight:700;line-height:1;">3</div>
+                <div style="font-size:0.46rem;letter-spacing:0.14em;text-transform:uppercase;color:#555;margin-top:0.15rem;">Ship Classes</div>
+              </div>
+              <div style="text-align:center;">
+                <div style="font-family:Georgia,serif;font-size:1.5rem;color:#c9a227;font-weight:700;line-height:1;">1</div>
+                <div style="font-size:0.46rem;letter-spacing:0.14em;text-transform:uppercase;color:#555;margin-top:0.15rem;">Full GDD</div>
+              </div>
+            </div>
+            <div style="font-size:0.56rem;color:#444;font-style:italic;max-width:220px;line-height:1.5;margin-top:0.2rem;">Inspired by Fractured Space &mdash; fully designed in approx. one month</div>
+          </div>
+        </div>
+        <div class="svc-caption">Space Rivals! &middot; Original IP</div>
+      </div>
+    </div>
+    <div class="proj-header">
+    <button class="modal-close" onclick="closeModal('modal-space')">&times;</button>
+    <div class="modal-label">Tier A &middot; Featured Project</div>
+    <h2 class="modal-title">Space Rivals!</h2>
+    <p class="modal-subtitle">MMORPG 3D Space Simulator &middot; Full GDD + Balance Document</p>
+    <div class="meta-grid">
+      <div><div class="meta-key">Genre</div><div class="meta-val">3D Space MMORPG
+    
+  </div>
+</div>
+      <div><div class="meta-key">Platform</div><div class="meta-val">PC</div></div>
+      <div><div class="meta-key">Role</div><div class="meta-val">Lead Game Designer</div></div>
+      <div><div class="meta-key">Scope</div><div class="meta-val">Full GDD + Balance Doc</div></div>
+    </div>
+    <div class="modal-divider"></div>
+    </div>
+  </div>
+  <div class="proj-body">
+    <div class="modal-body">
+      <div class="modal-section-title">Overview</div>
+      <p>An original MMORPG 3D space simulator with 6 civilizations, each in its own galaxy. Players choose a civilization, build their fleet, and compete in high-speed PvP and PvE battles. Inspired by <em>Fractured Space</em>. Full GDD and balance document delivered as a freelance commission in approximately one month.</p>
+      <div class="modal-section-title">Core Systems</div>
+      <ul>
+        <li><strong>Ship combat:</strong> 6-sided hull system &mdash; directional damage forces tactical positioning</li>
+        <li><strong>3 ship classes:</strong> Heavy, Medium, Light &mdash; each with distinct playstyle and economy role</li>
+        <li><strong>6 civilization galaxies</strong> with capital stations, planetary sectors, wormhole travel</li>
+        <li><strong>Economy:</strong> resources, crystals, ore mining, crafting, player-owned cities and bays</li>
+        <li>Reputation system and rotating PvE events alongside ranked PvP</li>
+      </ul>
+      <div class="modal-section-title">Balance Document</div>
+      <p>A dedicated balance document covers weapon damage curves, class matchup tuning, resource acquisition rates, and progression pacing &mdash; ensuring competitive viability across ship types from launch.</p>
+    </div>
+    <div class="modal-links">
+      <a href="assets/docs/space-rivals-gdd.pdf" target="_blank" class="modal-link">GDD</a>
+      <a href="assets/docs/space-rivals-ships.pdf" target="_blank" class="modal-link">Ships Customization</a>
+    </div>
+  </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-mindless" onclick="closeModalOutside(event,'modal-mindless')">
+  <div class="modal modal-project-modal" style="display:grid;grid-template-columns:0.82fr 1fr;grid-template-rows:400px auto;padding:0;max-width:min(900px,94vw);position:relative;">
+  <div class="proj-top">
+    <div class="svc-slider" id="slider-mindless-modal">
+      <div class="svc-hint">click image to zoom</div>
+      <div class="svc-slide active" onclick="event.stopPropagation();openLightbox('assets/img/mindless.jpg','Mindless Breakpoint')">
+        <img src="assets/img/mindless.jpg" alt="Mindless Breakpoint" loading="lazy">
+        <div class="svc-caption">Mindless Breakpoint · Itamde</div>
+      </div>
+    </div>
+    <div class="proj-header">
+    <button class="modal-close" onclick="closeModal('modal-mindless')">&times;</button>
+    <div class="modal-label">Tier B &middot; Design Work</div>
+    <h2 class="modal-title">Mindless Breakpoint</h2>
+    <p class="modal-subtitle">First-Person Horror Adventure &middot; Itamde &middot; External Consultant</p>
+    <div class="meta-grid">
+      <div><div class="meta-key">Genre</div><div class="meta-val">Horror Adventure
+    
+  </div>
+</div>
+      <div><div class="meta-key">Platform</div><div class="meta-val">PC (Steam)</div></div>
+      <div><div class="meta-key">Studio</div><div class="meta-val">Itamde</div></div>
+      <div><div class="meta-key">Role</div><div class="meta-val">External Consultant</div></div>
+    </div>
+    <div class="modal-divider"></div>
+    </div>
+  </div>
+  <div class="proj-body">
+    <div class="modal-body">
+      <div class="modal-section-title">The Game</div>
+      <p>A first-person horror adventure with puzzles and action set inside a vast mental asylum. Players explore in free-roaming 3D, picking up key items, solving puzzles, and witnessing terrifying visions of the past to uncover the mystery of <strong>Philip Henry</strong> and the tormented souls within.</p>
+      <p>The game carries an LGBTQ+ narrative thread: through Philip&rsquo;s journey it explores themes of self-discovery and acceptance.</p>
+      <div class="modal-section-title">My Role</div>
+      <p>I contributed as <strong>External Consultant of Game &amp; Narrative Design</strong> &mdash; providing design direction, narrative feedback, and story structure recommendations to the Itamde team during development.</p>
+    </div>
+    <div class="modal-links">
+      <a href="https://store.steampowered.com/app/2274810/Mindless_Breakpoint/" target="_blank" rel="noopener" class="modal-link">Steam &#8594;</a>
+      <a href="https://www.youtube.com/watch?v=Ia-SeAMn_eY" target="_blank" rel="noopener" class="modal-link">Teaser &#8594;</a>
+      <a href="https://itamde.com/en/project/mindless-breakpoint/" target="_blank" rel="noopener" class="modal-link">Studio Page &#8594;</a>
+    </div>
+  </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-newworld" onclick="closeModalOutside(event,'modal-newworld')">
+  <div class="modal modal-project-modal" style="display:grid;grid-template-columns:0.82fr 1fr;grid-template-rows:400px auto;padding:0;max-width:min(900px,94vw);position:relative;">
+  <div class="proj-top">
+    <div class="svc-slider" id="slider-newworld-modal">
+      <div class="svc-hint">click image to zoom</div>
+      <div class="svc-slide active" onclick="event.stopPropagation();openLightbox('assets/img/newworld.webp','New World · Amazon Games')">
+        <img src="assets/img/newworld.webp" alt="New World · Amazon Games" loading="lazy">
+        <div class="svc-caption">New World · Amazon Games</div>
+      </div>
+    </div>
+    <div class="proj-header">
+    <button class="modal-close" onclick="closeModal('modal-newworld')">&times;</button>
+    <div class="modal-label">Tier B &middot; AAA Experience</div>
+    <h2 class="modal-title">New World</h2>
+    <p class="modal-subtitle">Amazon Games &middot; MMORPG &middot; European Launch</p>
+    <div class="meta-grid">
+      <div><div class="meta-key">Studio</div><div class="meta-val">Amazon Games
+    
+  </div>
+</div>
+      <div><div class="meta-key">Role</div><div class="meta-val">Tester + CM + Forum Mod</div></div>
+    </div>
+    <div class="modal-divider"></div>
+    </div>
+  </div>
+  <div class="proj-body">
+    <div class="modal-body">
+      <div class="modal-section-title">Role</div>
+      <p>Game Tester, Community Manager, and <strong>Forum Moderator</strong> for <em>New World</em> during European launch &mdash; front-line contact between the player community and the development team.</p>
+      <div class="modal-section-title">Responsibilities</div>
+      <ul>
+        <li>Bug identification, reproduction, and structured QA reporting</li>
+        <li>Forum moderation: enforcing community guidelines, managing player disputes, surfacing feedback</li>
+        <li>Community feedback synthesis &mdash; translating player sentiment into actionable design notes</li>
+        <li>Player communication during live events, patch rollouts, and incidents</li>
+        <li>Multilingual support (IT/EN/ES)</li>
+        <li>Ban and enforcement actions on players violating community rules</li>
+      </ul>
+    </div>
+  </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-lostark" onclick="closeModalOutside(event,'modal-lostark')">
+  <div class="modal modal-project-modal" style="display:grid;grid-template-columns:0.82fr 1fr;grid-template-rows:400px auto;padding:0;max-width:min(900px,94vw);position:relative;">
+  <div class="proj-top">
+    <div class="svc-slider" id="slider-lostark-modal">
+      <div class="svc-hint">click image to zoom</div>
+      <div class="svc-slide active" onclick="event.stopPropagation();openLightbox('assets/img/lostark.webp','Lost Ark · Amazon Games')">
+        <img src="assets/img/lostark.webp" alt="Lost Ark · Amazon Games" loading="lazy">
+        <div class="svc-caption">Lost Ark · Amazon Games</div>
+      </div>
+    </div>
+    <div class="proj-header">
+    <button class="modal-close" onclick="closeModal('modal-lostark')">&times;</button>
+    <div class="modal-label">Tier B &middot; AAA Experience</div>
+    <h2 class="modal-title">Lost Ark</h2>
+    <p class="modal-subtitle">Amazon Games &middot; MMORPG &middot; European Launch</p>
+    <div class="meta-grid">
+      <div><div class="meta-key">Studio</div><div class="meta-val">Amazon Games
+    
+  </div>
+</div>
+      <div><div class="meta-key">Role</div><div class="meta-val">Tester + CM + Forum Mod</div></div>
+    </div>
+    <div class="modal-divider"></div>
+    </div>
+  </div>
+  <div class="proj-body">
+    <div class="modal-body">
+      <div class="modal-section-title">Role</div>
+      <p>Game Tester, Community Manager, and <strong>Forum Moderator</strong> for <em>Lost Ark</em> during European launch &mdash; one of the highest-concurrent-player launches in Amazon Games history.</p>
+      <div class="modal-section-title">Responsibilities</div>
+      <ul>
+        <li>Bug identification, reproduction, and structured QA reporting during rapid release cycles</li>
+        <li>Forum moderation during a high-traffic launch period</li>
+        <li>Community feedback synthesis and escalation to development team</li>
+        <li>Player communication during live events, server incidents, and patch management</li>
+        <li>Multilingual support (IT/EN/ES)</li>
+        <li>Ban and enforcement actions on players violating community rules</li>
+      </ul>
+    </div>
+  </div>
+  </div>
+</div>
+
+<script>
+
+function switchTab(name) {
+  document.querySelectorAll('.ex-tab').forEach(function(t){ t.classList.toggle('active', t.dataset.tab === name); });
+  document.querySelectorAll('.tab-content').forEach(function(c){ c.classList.toggle('active', c.id === 'tab-' + name); });
+}
+
+function sliderNext(id) {
+  var el = document.getElementById(id);
+  var slides = el.querySelectorAll('.svc-slide');
+  var dots = el.querySelectorAll('.svc-dot');
+  var cur = el.querySelector('.svc-slide.active');
+  var idx = Array.from(slides).indexOf(cur);
+  var nxt = (idx + 1) % slides.length;
+  slides[idx].classList.remove('active'); slides[nxt].classList.add('active');
+  if (dots.length) { dots[idx].classList.remove('active'); dots[nxt].classList.add('active'); }
+}
+function sliderPrev(id) {
+  var el = document.getElementById(id);
+  var slides = el.querySelectorAll('.svc-slide');
+  var dots = el.querySelectorAll('.svc-dot');
+  var cur = el.querySelector('.svc-slide.active');
+  var idx = Array.from(slides).indexOf(cur);
+  var prv = (idx - 1 + slides.length) % slides.length;
+  slides[idx].classList.remove('active'); slides[prv].classList.add('active');
+  if (dots.length) { dots[idx].classList.remove('active'); dots[prv].classList.add('active'); }
+}
+function sliderGo(id, n) {
+  var el = document.getElementById(id);
+  var slides = el.querySelectorAll('.svc-slide');
+  var dots = el.querySelectorAll('.svc-dot');
+  slides.forEach(function(s,i){s.classList.toggle('active',i===n);});
+  dots.forEach(function(d,i){d.classList.toggle('active',i===n);});
+}
+function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeAllModals() { document.querySelectorAll(".modal-overlay").forEach(function(m){m.classList.remove("open");}); document.body.style.overflow=""; }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
+function closeModalOutside(e, id) { if (e.target === document.getElementById(id)) closeModal(id); }
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(function(m) { m.classList.remove('open'); document.body.style.overflow = ''; });
+});
+
+// ── LIGHTBOX ──────────────────────────────────────────────────────────────────
+function openLightbox(src, alt) {
+  var lb = document.getElementById('lightbox-overlay');
+  if (!lb) {
+    lb = document.createElement('div');
+    lb.id = 'lightbox-overlay';
+    lb.style.cssText = 'position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.96);display:flex;align-items:center;justify-content:center;overflow:hidden;user-select:none;';
+
+    var img = document.createElement('img');
+    img.id = 'lightbox-img';
+    img.style.cssText = 'max-width:92vw;max-height:92vh;object-fit:contain;display:block;transform-origin:center;will-change:transform;';
+    img.onclick = function(e){ e.stopPropagation(); };
+    lb.appendChild(img);
+
+    /* ── Close button ── */
+    var closeBtn = document.createElement('button');
+    closeBtn.innerHTML = '&times;';
+    closeBtn.style.cssText = 'position:fixed;top:1.2rem;right:1.5rem;background:none;border:1px solid rgba(201,162,39,0.4);color:#c9a227;font-size:1.6rem;line-height:1;padding:0.1rem 0.55rem;cursor:pointer;z-index:9001;font-family:sans-serif;';
+    closeBtn.onclick = function(e){ e.stopPropagation(); closeLightbox(); };
+    lb.appendChild(closeBtn);
+
+    /* ── Open full size button ── */
+    var openBtn = document.createElement('a');
+    openBtn.id = 'lightbox-open-full';
+    openBtn.target = '_blank';
+    openBtn.rel = 'noopener';
+    openBtn.innerHTML = 'open full &nearr;';
+    openBtn.style.cssText = 'position:fixed;top:1.25rem;left:1.5rem;background:none;border:1px solid rgba(201,162,39,0.35);color:#c9a227;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.28rem 0.65rem;cursor:pointer;z-index:9001;text-decoration:none;font-family:sans-serif;';
+    openBtn.onclick = function(e){ e.stopPropagation(); };
+    lb.appendChild(openBtn);
+
+    /* ── Hint ── */
+    var hint = document.createElement('div');
+    hint.innerHTML = 'scroll &nbsp;·&nbsp; drag &nbsp;·&nbsp; dbl-click to reset';
+    hint.style.cssText = 'position:fixed;bottom:1.1rem;left:50%;transform:translateX(-50%);color:#3a3a3a;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;pointer-events:none;z-index:9001;white-space:nowrap;font-family:sans-serif;';
+    lb.appendChild(hint);
+
+    /* ── Zoom / pan state ── */
+    var scale = 1, tx = 0, ty = 0, dragging = false, startX, startY, startTx, startTy;
+
+    function applyT(animated) {
+      img.style.transition = animated ? 'transform 0.22s ease' : 'none';
+      img.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
+      img.style.cursor = scale > 1 ? (dragging ? 'grabbing' : 'grab') : 'default';
+    }
+
+    lb._reset = function() { scale=1; tx=0; ty=0; dragging=false; applyT(true); };
+
+    /* scroll to zoom */
+    lb.addEventListener('wheel', function(e) {
+      e.preventDefault();
+      var rect = lb.getBoundingClientRect();
+      var mx = e.clientX - rect.left - rect.width/2;
+      var my = e.clientY - rect.top - rect.height/2;
+      var delta = e.deltaY < 0 ? 1.15 : 0.87;
+      var newScale = Math.min(Math.max(scale * delta, 0.5), 10);
+      /* shift translate so zoom anchors to cursor */
+      tx = mx - (mx - tx) * (newScale / scale);
+      ty = my - (my - ty) * (newScale / scale);
+      scale = newScale;
+      applyT(false);
+    }, { passive: false });
+
+    /* drag to pan */
+    img.addEventListener('mousedown', function(e) {
+      if (scale <= 1) return;
+      e.preventDefault();
+      dragging=true; startX=e.clientX; startY=e.clientY; startTx=tx; startTy=ty;
+      applyT(false);
+    });
+    document.addEventListener('mousemove', function(e) {
+      if (!dragging) return;
+      tx = startTx + e.clientX - startX;
+      ty = startTy + e.clientY - startY;
+      applyT(false);
+    });
+    document.addEventListener('mouseup', function() {
+      if (dragging) { dragging=false; applyT(false); }
+    });
+
+    /* double-click to reset */
+    img.addEventListener('dblclick', function(e) { e.stopPropagation(); lb._reset(); });
+
+    /* backdrop click: if zoomed → reset, else close */
+    lb.onclick = function(e) {
+      if (e.target !== lb) return;
+      if (scale > 1.05) { lb._reset(); } else { closeLightbox(); }
+    };
+
+    document.addEventListener('keydown', function(e) {
+      if (lb.style.display==='flex' && e.key==='Escape') closeLightbox();
+    });
+
+    document.body.appendChild(lb);
+  }
+
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox-img').alt = alt || '';
+  document.getElementById('lightbox-open-full').href = src;
+  if (lb._reset) lb._reset();
+  lb.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  var lb = document.getElementById('lightbox-overlay');
+  if (!lb) return;
+  lb.style.display = 'none';
+  document.body.style.overflow = '';
+  if (lb._reset) lb._reset();
+}
+──────
+
+// ── AUTO-SLIDE ─────────────────────────────────────────────────────────────────
+document.querySelectorAll('.svc-slider').forEach(function(slider) {
+  var id = slider.id;
+  setInterval(function() {
+    var overlay = slider.closest('.modal-overlay');
+    if (overlay && overlay.classList.contains('open') && !slider.dataset.paused) {
+      sliderNext(id);
+    }
+  }, 5000);
+  slider.addEventListener('mouseenter', function(){ slider.dataset.paused = '1'; });
+  slider.addEventListener('mouseleave', function(){ delete slider.dataset.paused; });
+});
+var revObs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.reveal').forEach(function(el) { revObs.observe(el); });
+document.querySelectorAll('.services-grid,.cards-s,.cards-a,.cards-b,.exercises-grid').forEach(function(g) {
+  g.querySelectorAll('.reveal').forEach(function(el, i) { el.style.transitionDelay = (i * 0.07) + 's'; });
+});
+var navLinks = document.querySelectorAll('.nav-links a');
+var navObs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) {
+      navLinks.forEach(function(a) { a.classList.remove('active'); });
+      var a = document.querySelector('.nav-links a[href="#' + e.target.id + '"]');
+      if (a) a.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+document.querySelectorAll('section[id]').forEach(function(s) { navObs.observe(s); });
+</script>
+
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="position:fixed;bottom:2rem;right:2rem;z-index:150;width:40px;height:40px;border:1px solid var(--border);background:var(--bg2);color:var(--gold);cursor:pointer;display:none;align-items:center;justify-content:center;font-size:1rem;transition:all 0.2s;backdrop-filter:blur(8px);" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">&#8593;</button>
+<script>
+
+var navToggle = document.getElementById('nav-toggle');
+var navLinksEl = document.getElementById('nav-links');
+if (navToggle) {
+  navToggle.addEventListener('click', function() {
+    navLinksEl.classList.toggle('open');
+    navToggle.innerHTML = navLinksEl.classList.contains('open') ? '&#10005;' : '&#9776;';
+  });
+  navLinksEl.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      navLinksEl.classList.remove('open');
+      navToggle.innerHTML = '&#9776;';
+    });
+  });
+}
+var btt = document.getElementById('back-top');
+window.addEventListener('scroll', function(){ btt.style.display = window.scrollY > 400 ? 'flex' : 'none'; });
+
+  function openTextZoom(el) {
+    var dark = el.querySelector('.svc-slide-dark');
+    if (!dark) return;
+    var overlay = document.getElementById('text-zoom-overlay');
+    var content = document.getElementById('text-zoom-content');
+    content.innerHTML = dark.outerHTML;
+    // Remove absolute positioning from the cloned dark div so it flows normally
+    var cloned = content.querySelector('.svc-slide-dark');
+    if (cloned) {
+      cloned.style.position = 'relative';
+      cloned.style.inset = 'auto';
+      cloned.style.minHeight = '180px';
+    }
+    overlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+  function closeTextZoom() {
+    document.getElementById('text-zoom-overlay').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+</script>
+
+<!-- Text Zoom Overlay -->
+<div id="text-zoom-overlay" onclick="closeTextZoom()" style="display:none;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.94);align-items:center;justify-content:center;padding:2rem;overflow-y:auto;">
+  <div id="text-zoom-inner" onclick="event.stopPropagation()" style="position:relative;background:#0e0e0e;border:1px solid rgba(201,162,39,0.22);max-width:680px;width:100%;border-radius:2px;overflow:hidden;">
+    <button onclick="closeTextZoom()" style="position:absolute;top:0.8rem;right:1rem;background:none;border:none;color:#666;font-size:1.4rem;cursor:pointer;z-index:1;line-height:1;">&times;</button>
+    <div id="text-zoom-content" style="zoom:2.2;transform-origin:top left;"></div>
+  </div>
+</div>
+</body>
+</html>
